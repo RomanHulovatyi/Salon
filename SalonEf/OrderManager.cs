@@ -49,7 +49,8 @@ namespace SalonEf
 
         public Order GetSingle(int id)
         {
-            throw new NotImplementedException();
+            var order = _context.Orders.Single(x => x.Id == id);
+            return order;
         }
 
         public Order Update(int id, Order order)

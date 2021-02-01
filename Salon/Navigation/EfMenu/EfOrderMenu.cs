@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Salon.Services.EfAproach;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace Salon.Navigation.EfMenu
 {
-    public class EfMenu
+    public class EfOrderMenu
     {
-        public static void GetMenu()
+        public static void GetOrderMenu()
         {
             Console.WriteLine("_____________________________________________________________________");
             Console.WriteLine("_____________________________________________________________________");
             Console.WriteLine(" ");
 
-            Console.WriteLine("Please select what to do");
-            Console.WriteLine("1. Manage customers");
-            Console.WriteLine("2. Manage services");
-            Console.WriteLine("3. Manage order statuses");
-            Console.WriteLine("4. Manage orders");
-            Console.WriteLine("5. Return to main menu");
+            Console.WriteLine("Manage orders");
+
+            Console.WriteLine("1. Get all orders");
+            Console.WriteLine("2. Add new order");
+            Console.WriteLine("3. Update order");
+            Console.WriteLine("4. Delete order");
+            Console.WriteLine("5. Back to EF menu");
 
             Console.WriteLine("Type number of action you want to do:");
-
 
             string input = Console.ReadLine();
 
@@ -30,23 +31,27 @@ namespace Salon.Navigation.EfMenu
             switch (input)
             {
                 case "1":
-                    EfCustomerMenu.GetCustomerMenu();
+                    ManageOrders.GetList();
+                    GetOrderMenu();
                     break;
                 case "2":
-                    EfServiceMenu.GetServiceMenu();
+                    ManageOrders.Add();
+                    GetOrderMenu();
                     break;
                 case "3":
-                    EfStateMenu.GetStateMenu();
+                    ManageOrders.Update();
+                    GetOrderMenu();
                     break;
                 case "4":
-                    EfOrderMenu.GetOrderMenu();
+                    ManageOrders.Delete();
+                    GetOrderMenu();
                     break;
                 case "5":
-                    MainMenu.GetMenu();
+                    EfMenu.GetMenu();
                     break;
                 default:
                     Console.WriteLine("Wrong number, try again!");
-                    EfMenu.GetMenu();
+                    GetOrderMenu();
                     break;
             }
         }

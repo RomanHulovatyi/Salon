@@ -94,9 +94,10 @@ namespace SalonAdo
             return customers;
         }
 
-
-
-
+        public Customer GetSingle(int id)
+        {
+            throw new NotImplementedException();
+        }
 
         public Customer Update(int id, Customer customer)
         {
