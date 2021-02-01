@@ -96,7 +96,32 @@ namespace SalonAdo
 
         public Customer GetSingle(int id)
         {
-            throw new NotImplementedException();
+            string sqlExpression = $"SELECT * FROM Customers WHERE Id = {id}";
+
+            Customer customer = new Customer();
+
+            _connection.Open();
+
+            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    customer = new Customer
+                    {
+                        Id = reader.GetInt32(0),
+                        FirstName = reader.GetString(1),
+                        LastName = reader.GetString(2),
+                        PhoneNumber = reader.GetString(3),
+                        Email = reader.GetString(4)
+                    };
+                }
+            }
+
+            _connection.Close();
+
+            return customer;
         }
 
         public Customer Update(int id, Customer customer)

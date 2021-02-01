@@ -26,7 +26,7 @@ namespace Salon.Navigation
             switch (input)
             {
                 case "1":
-                    //Menu.GetMenu();
+                    AdoMenu.AdoMenu.GetMenu();
                     break;
                 case "2":
                     EfMenu.EfMenu.GetMenu();

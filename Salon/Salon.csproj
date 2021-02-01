@@ -14,12 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SalonAdo\SalonAdo.csproj" />
     <ProjectReference Include="..\SalonDAL\SalonDAL.csproj" />
     <ProjectReference Include="..\SalonEf\SalonEf.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Services\AdoAproach\" />
   </ItemGroup>
 
 </Project>
