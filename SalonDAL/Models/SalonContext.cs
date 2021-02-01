@@ -1,8 +1,5 @@
-﻿using System;
-using System.Configuration;
+﻿using System.Configuration;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.IdentityModel.Protocols;
 
 #nullable disable
 

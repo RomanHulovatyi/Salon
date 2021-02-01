@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Salon
+﻿namespace Salon
 {
     class Program
     {

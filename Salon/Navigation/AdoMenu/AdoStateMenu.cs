@@ -1,9 +1,5 @@
-﻿using Salon.Services.EfAproach;
+﻿using Salon.Services.AdoAproach;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salon.Navigation.AdoMenu
 {

@@ -1,11 +1,12 @@
-﻿using SalonDAL.Models;
+﻿using Microsoft.Data.SqlClient;
+using SalonAdo;
+using SalonDAL.Models;
 using SalonDAL.Models.Interfaces;
-using SalonEf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
 
-namespace Salon.Services.EfAproach
+namespace Salon.Services.AdoAproach
 {
     public class ManageServices
     {
@@ -13,12 +14,12 @@ namespace Salon.Services.EfAproach
         {
             try
             {
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of services:");
                     Console.WriteLine("{0, 5} {1, 35} {2, 10} ", "ID", "Name", "Surname");
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
                     IEnumerable<Service> listOfServices = serviceManager.GetList();
 
                     foreach (SalonDAL.Models.Service c in listOfServices)
@@ -61,9 +62,9 @@ namespace Salon.Services.EfAproach
                 }
                 service.Price = decPrice;
 
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
                     Service addedService = serviceManager.Add(service);
                 }
 
@@ -85,9 +86,11 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of service you want to update:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfServices = salonContext.Services.ToList();
+                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+
+                    IEnumerable<Service> listOfServices = serviceManager.GetList();
                     List<int> listOfIDs = new List<int>();
                     foreach (SalonDAL.Models.Service c in listOfServices)
                     {
@@ -103,7 +106,6 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
 
                     Service selectedService = serviceManager.GetSingle(idOfService);
 
@@ -170,9 +172,11 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of service you want to delete:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfServices = salonContext.Services.ToList();
+                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+
+                    IEnumerable<Service> listOfServices = serviceManager.GetList();
                     List<int> listOfIDs = new List<int>();
                     foreach (SalonDAL.Models.Service c in listOfServices)
                     {
@@ -188,7 +192,6 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
                     serviceManager.Delete(idOfService);
 
                     Console.WriteLine($"Service with ID {idToDelete} deleted.");

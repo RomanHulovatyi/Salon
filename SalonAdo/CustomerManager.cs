@@ -1,11 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using SalonDAL.Models;
 using SalonDAL.Models.Interfaces;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SalonAdo
 {

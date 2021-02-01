@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Salon.Services.AdoAproach;
+using System;
 
 namespace Salon.Navigation.AdoMenu
 {
@@ -30,19 +27,19 @@ namespace Salon.Navigation.AdoMenu
             switch (input)
             {
                 case "1":
-                    //ManageOrders.GetList();
+                    ManageOrders.GetList();
                     GetOrderMenu();
                     break;
                 case "2":
-                    //ManageOrders.Add();
+                    ManageOrders.Add();
                     GetOrderMenu();
                     break;
                 case "3":
-                    //ManageOrders.Update();
+                    ManageOrders.Update();
                     GetOrderMenu();
                     break;
                 case "4":
-                    //ManageOrders.Delete();
+                    ManageOrders.Delete();
                     GetOrderMenu();
                     break;
                 case "5":

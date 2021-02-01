@@ -5,26 +5,24 @@ using System.Collections.Generic;
 
 namespace SalonAdo
 {
-    public class ServiceManager : ISalonManager<Service>
+    public class StateManager : ISalonManager<State>
     {
         private readonly SqlConnection _connection;
 
-        public ServiceManager(SqlConnection connection)
+        public StateManager(SqlConnection connection)
         {
             _connection = connection;
         }
 
-        public Service Add(Service service)
+        public State Add(State state)
         {
-            Service newService = new Service
+            State newState = new State
             {
-                NameOfService = service.NameOfService,
-                Price = service.Price,
+                OrderStatus = state.OrderStatus
             };
 
-            string sqlExpression = $"INSERT INTO Services (NameOfService, Price) " +
-                                    $"VALUES (N'{newService.NameOfService}', " +
-                                    $"N'{newService.Price}'";
+            string sqlExpression = $"INSERT INTO States (OrderStatus) VALUES (N'{newState.OrderStatus})'";
+
             _connection.Open();
 
             SqlCommand command = new SqlCommand(sqlExpression, _connection);
@@ -32,12 +30,12 @@ namespace SalonAdo
 
             _connection.Close();
 
-            return newService;
+            return newState;
         }
 
         public void Delete(int id)
         {
-            string sqlExpression = $"DELETE FROM Services WHERE Id={id}";
+            string sqlExpression = $"DELETE FROM States WHERE Id={id}";
 
             _connection.Open();
 
@@ -47,11 +45,11 @@ namespace SalonAdo
             _connection.Close();
         }
 
-        public IEnumerable<Service> GetList()
+        public IEnumerable<State> GetList()
         {
-            string sqlExpression = "SELECT * FROM Services";
+            string sqlExpression = "SELECT * FROM States";
 
-            List<Service> services = new List<Service>();
+            List<State> states = new List<State>();
 
             _connection.Open();
 
@@ -62,27 +60,26 @@ namespace SalonAdo
             {
                 while (reader.Read())
                 {
-                    Service service = new Service
+                    State state = new State
                     {
                         Id = reader.GetInt32(0),
-                        NameOfService = reader.GetString(1),
-                        Price = reader.GetDecimal(2)
+                        OrderStatus = reader.GetString(1)
                     };
 
-                    services.Add(service);
+                    states.Add(state);
                 }
             }
 
             _connection.Close();
 
-            return services;
+            return states;
         }
 
-        public Service GetSingle(int id)
+        public State GetSingle(int id)
         {
-            string sqlExpression = $"SELECT * FROM Services WHERE Id = {id}";
+            string sqlExpression = $"SELECT * FROM States WHERE Id = {id}";
 
-            Service service = new Service();
+            State state = new State();
 
             _connection.Open();
 
@@ -92,33 +89,29 @@ namespace SalonAdo
             {
                 while (reader.Read())
                 {
-                    service = new Service
+                    state = new State
                     {
                         Id = reader.GetInt32(0),
-                        NameOfService = reader.GetString(1),
-                        Price = reader.GetDecimal(2)
+                        OrderStatus = reader.GetString(1)
                     };
                 }
             }
 
             _connection.Close();
 
-            return service;
+            return state;
         }
 
-        public Service Update(int id, Service service)
+        public State Update(int id, State state)
         {
-            Service serviceToUpdate = new Service
+            State stateToUpdate = new State
             {
                 Id = id,
-                NameOfService = service.NameOfService,
-                Price = service.Price
+                OrderStatus = state.OrderStatus
             };
 
-            string sqlExpression = "UPDATE Services " +
-                                            $"SET NameOfService = N'{serviceToUpdate.NameOfService}'," +
-                                            $"Price = '{serviceToUpdate.Price}'" +
-                                            $"WHERE Id={id}";
+            string sqlExpression = "UPDATE States " +
+                                            $"SET OrderStatus = N'{stateToUpdate.OrderStatus}' WHERE Id={id}";
 
             _connection.Open();
 
@@ -127,7 +120,7 @@ namespace SalonAdo
 
             _connection.Close();
 
-            return serviceToUpdate;
+            return stateToUpdate;
         }
     }
 }

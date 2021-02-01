@@ -1,11 +1,12 @@
-﻿using SalonDAL.Models;
+﻿using Microsoft.Data.SqlClient;
+using SalonAdo;
+using SalonDAL.Models;
 using SalonDAL.Models.Interfaces;
-using SalonEf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
 
-namespace Salon.Services.EfAproach
+namespace Salon.Services.AdoAproach
 {
     public class ManageStates
     {
@@ -13,12 +14,12 @@ namespace Salon.Services.EfAproach
         {
             try
             {
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of states:");
                     Console.WriteLine("{0, 5} {1, 20} ", "ID", "Order status");
 
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateManager(connection);
                     IEnumerable<State> listOfStates = stateManager.GetList();
 
                     foreach (SalonDAL.Models.State c in listOfStates)
@@ -38,7 +39,6 @@ namespace Salon.Services.EfAproach
         {
             try
             {
-
                 State state = new State();
 
                 Console.WriteLine("Please enter the following information:");
@@ -51,9 +51,9 @@ namespace Salon.Services.EfAproach
                     state.OrderStatus = Console.ReadLine();
                 }
 
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateManager(connection);
                     State addedState = stateManager.Add(state);
                 }
 
@@ -75,9 +75,11 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of state you want to update:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfStates = salonContext.States.ToList();
+                    ISalonManager<State> stateManager = new StateManager(connection);
+
+                    IEnumerable<State> listOfStates = stateManager.GetList();
                     List<int> listOfIDs = new List<int>();
                     foreach (SalonDAL.Models.State c in listOfStates)
                     {
@@ -92,8 +94,6 @@ namespace Salon.Services.EfAproach
                         Console.WriteLine($"State with ID {idOfState} dosent found. Try again: ");
                         idToUpdate = Console.ReadLine();
                     }
-
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
 
                     State selectedState = stateManager.GetSingle(idOfState);
 
@@ -129,9 +129,11 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of order status you want to delete:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfStates = salonContext.States.ToList();
+                    ISalonManager<State> stateManager = new StateManager(connection);
+
+                    IEnumerable<State> listOfStates = stateManager.GetList();
                     List<int> listOfIDs = new List<int>();
                     foreach (SalonDAL.Models.State c in listOfStates)
                     {
@@ -147,7 +149,6 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
                     stateManager.Delete(idOfState);
 
                     Console.WriteLine($"Order status with ID {idToDelete} deleted.");

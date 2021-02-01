@@ -1,11 +1,12 @@
-﻿using SalonDAL.Models;
+﻿using Microsoft.Data.SqlClient;
+using SalonAdo;
+using SalonDAL.Models;
 using SalonDAL.Models.Interfaces;
-using SalonEf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Configuration;
 
-namespace Salon.Services.EfAproach
+namespace Salon.Services.AdoAproach
 {
     public class ManageOrders
     {
@@ -13,12 +14,12 @@ namespace Salon.Services.EfAproach
         {
             try
             {
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of orders:");
                     Console.WriteLine("{0, 5} {1, 20} {2, 35} {3, 35} {4, 15}", "ID", "Customer", "Service", "Date", "Status");
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
+                    ISalonManager<Order> orderManager = new OrderManager(connection);
                     IEnumerable<Order> listOfOrders = orderManager.GetList();
 
                     foreach (SalonDAL.Models.Order c in listOfOrders)
@@ -43,12 +44,14 @@ namespace Salon.Services.EfAproach
 
                 Console.WriteLine("Please enter the following information:");
 
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfServices = salonContext.Services.ToList();
+                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+
+                    IEnumerable<Service> listOfServices = serviceManager.GetList();
                     List<int> listOfServiceIds = new List<int>();
 
-                    foreach(SalonDAL.Models.Service c in listOfServices)
+                    foreach (SalonDAL.Models.Service c in listOfServices)
                     {
                         listOfServiceIds.Add(c.Id);
                     }
@@ -58,16 +61,16 @@ namespace Salon.Services.EfAproach
                     Console.Write("Enter service ID: ");
                     string serviceId = Console.ReadLine();
                     int selectedServiceId;
-                    
-                    while(!int.TryParse(serviceId, out selectedServiceId) || !listOfServiceIds.Contains(selectedServiceId))
+
+                    while (!int.TryParse(serviceId, out selectedServiceId) || !listOfServiceIds.Contains(selectedServiceId))
                     {
                         Console.WriteLine("Incorrect value! Please enter a valid ID: ");
                         serviceId = Console.ReadLine();
                     }
                     order.ServiceId = selectedServiceId;
 
-
-                    var listOfCustomers = salonContext.Customers.ToList();
+                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    IEnumerable<Customer> listOfCustomers = customerManager.GetList();
                     List<int> listOfCustomerIds = new List<int>();
 
                     foreach (SalonDAL.Models.Customer c in listOfCustomers)
@@ -104,7 +107,7 @@ namespace Salon.Services.EfAproach
 
                     order.StatusId = 6;
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
+                    ISalonManager<Order> orderManager = new OrderManager(connection);
                     Order addedOrder = orderManager.Add(order);
                 }
 
@@ -127,9 +130,10 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of order you want to update:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfOrders = salonContext.Orders.ToList();
+                    ISalonManager<Order> orderManager = new OrderManager(connection);
+                    IEnumerable<Order> listOfOrders = orderManager.GetList();
 
                     List<int> listOfIDs = new List<int>();
 
@@ -146,8 +150,6 @@ namespace Salon.Services.EfAproach
                         Console.WriteLine($"Order with ID {OrderId} dosent found. Try again: ");
                         idToUpdate = Console.ReadLine();
                     }
-
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
 
                     Order selectedOrder = orderManager.GetSingle(OrderId);
 
@@ -167,7 +169,9 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select new service");
                             ManageServices.GetList();
 
-                            var listOfServices = salonContext.Services.ToList();
+                            ISalonManager<Service> serviceManager = new ServiceManager(connection);
+
+                            IEnumerable<Service> listOfServices = serviceManager.GetList();
 
                             List<int> listOfServiceIDs = new List<int>();
 
@@ -179,7 +183,7 @@ namespace Salon.Services.EfAproach
                             Console.Write("Change service ID to:");
                             string serviceIdToUpdate = Console.ReadLine();
                             int intServiceIdToUpdate;
-                            while (!Int32.TryParse(serviceIdToUpdate, out intServiceIdToUpdate) 
+                            while (!Int32.TryParse(serviceIdToUpdate, out intServiceIdToUpdate)
                                 || !listOfServiceIDs.Contains(intServiceIdToUpdate))
                             {
                                 Console.Write("Incorrect value! Please enter a valid service ID: ");
@@ -196,7 +200,9 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select new customer");
                             ManageCustomers.GetList();
 
-                            var listOfCustomers = salonContext.Customers.ToList();
+                            ISalonManager<Customer> customerManager = new CustomerManager(connection);
+
+                            IEnumerable<Customer> listOfCustomers = customerManager.GetList();
 
                             List<int> listOfCustomerIDs = new List<int>();
 
@@ -242,7 +248,9 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select order status");
                             ManageStates.GetList();
 
-                            var listOfStates = salonContext.States.ToList();
+                            ISalonManager<State> stateManager = new StateManager(connection);
+
+                            IEnumerable<State> listOfStates = stateManager.GetList();
 
                             List<int> listOfStateIDs = new List<int>();
 
@@ -296,9 +304,11 @@ namespace Salon.Services.EfAproach
                 GetList();
 
                 Console.Write("Enter ID of order you want to delete:");
-                using (SalonContext salonContext = new SalonContext())
+                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    var listOfOrders = salonContext.Orders.ToList();
+                    ISalonManager<Order> orderManager = new OrderManager(connection);
+
+                    IEnumerable<Order> listOfOrders = orderManager.GetList();
                     List<int> listOfIDs = new List<int>();
                     foreach (SalonDAL.Models.Order c in listOfOrders)
                     {
@@ -314,7 +324,6 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
                     orderManager.Delete(idOfOrder);
 
                     Console.WriteLine($"Order with ID {idToDelete} deleted.");
