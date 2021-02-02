@@ -17,14 +17,17 @@ namespace Salon.Services.AdoAproach
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of orders:");
-                    Console.WriteLine("{0, 5} {1, 20} {2, 35} {3, 35} {4, 15}", "ID", "Customer", "Service", "Date", "Status");
+                    //Console.WriteLine("{0, 5} {1, 20} {2, 35} {3, 35} {4, 15}", "ID", "Customer", "Service", "Date", "Status");
+                    Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", "ID", "Customer", "Service", "Price", "Date", "Status");
 
-                    ISalonManager<Order> orderManager = new OrderManager(connection);
-                    IEnumerable<Order> listOfOrders = orderManager.GetList();
+                    OrderManager orderManager = new OrderManager(connection);
+                    IEnumerable<OrderTable> listOfOrders = orderManager.GetView();
 
-                    foreach (SalonDAL.Models.Order c in listOfOrders)
+                    foreach (SalonDAL.Models.OrderTable c in listOfOrders)
                     {
-                        Console.WriteLine("{0,5} {1,20} {2,35} {3,35} {4,15}", c.Id, c.ServiceId, c.CustomerId, c.DateOfProcedure, c.StatusId); ;
+                        //Console.WriteLine("{0,5} {1,20} {2,35} {3,35} {4,15}", c.Id, c.ServiceId, c.CustomerId, c.DateOfProcedure, c.StatusId);
+                        Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", c.Id, c.Customer, c.Service, c.Price, c.Date, c.Status); ;
+
                     }
                 }
             }

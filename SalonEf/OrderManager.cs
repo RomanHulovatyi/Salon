@@ -64,5 +64,11 @@ namespace SalonEf
 
             return orderToUpdate;
         }
+
+        public IEnumerable<OrderTable> GetView()
+        {
+            var orders = _context.OrderTables.OrderByDescending(x => x.Date).ToList();
+            return orders;
+        }
     }
 }

@@ -147,5 +147,39 @@ namespace SalonAdo
 
             return orderToUpdate;
         }
+
+        public IEnumerable<OrderTable> GetView()
+        {
+            string sqlExpression = "SELECT * FROM OrderTable ORDER BY [Date]";
+
+            List<OrderTable> orders = new List<OrderTable>();
+
+            _connection.Open();
+
+            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlDataReader reader = command.ExecuteReader();
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    OrderTable order = new OrderTable
+                    {
+                        Id = reader.GetInt32(0),
+                        Customer = reader.GetString(1),
+                        Service = reader.GetString(2),
+                        Price = reader.GetDecimal(3),
+                        Date = reader.GetDateTime(4),
+                        Status = reader.GetString(5)
+                    };
+
+                    orders.Add(order);
+                }
+            }
+
+            _connection.Close();
+
+            return orders;
+        }
     }
 }

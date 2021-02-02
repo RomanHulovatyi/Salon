@@ -1,5 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 #nullable disable
 
@@ -18,6 +19,7 @@ namespace SalonDAL.Models
 
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
+        public virtual DbSet<OrderTable> OrderTables { get; set; }
         public virtual DbSet<Service> Services { get; set; }
         public virtual DbSet<State> States { get; set; }
 
@@ -25,7 +27,8 @@ namespace SalonDAL.Models
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseSqlServer(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString);
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+                optionsBuilder.UseSqlServer("Server=(localdb)\\MSSQLLocalDB;Database=Salon;Trusted_Connection=True;");
             }
         }
 
@@ -35,10 +38,10 @@ namespace SalonDAL.Models
 
             modelBuilder.Entity<Customer>(entity =>
             {
-                entity.HasIndex(e => e.PhoneNumber, "UQ__Customer__85FB4E38480CDC99")
+                entity.HasIndex(e => e.PhoneNumber, "UQ__Customer__85FB4E388EE8F98D")
                     .IsUnique();
 
-                entity.HasIndex(e => e.Email, "UQ__Customer__A9D10534711F3A2C")
+                entity.HasIndex(e => e.Email, "UQ__Customer__A9D105342F8083FC")
                     .IsUnique();
 
                 entity.Property(e => e.Email)
@@ -65,24 +68,43 @@ namespace SalonDAL.Models
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.CustomerId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Orders__Customer__2E1BDC42");
+                    .HasConstraintName("FK__Orders__Customer__52593CB8");
 
                 entity.HasOne(d => d.Service)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.ServiceId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Orders__ServiceI__2D27B809");
+                    .HasConstraintName("FK__Orders__ServiceI__5165187F");
 
                 entity.HasOne(d => d.Status)
                     .WithMany(p => p.Orders)
                     .HasForeignKey(d => d.StatusId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK__Orders__StatusId__2F10007B");
+                    .HasConstraintName("FK__Orders__StatusId__534D60F1");
+            });
+
+            modelBuilder.Entity<OrderTable>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToView("OrderTable");
+
+                entity.Property(e => e.Customer).HasMaxLength(61);
+
+                entity.Property(e => e.Date).HasColumnType("datetime");
+
+                entity.Property(e => e.Price).HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.Service)
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.Status).HasMaxLength(20);
             });
 
             modelBuilder.Entity<Service>(entity =>
             {
-                entity.HasIndex(e => e.NameOfService, "UQ__Services__370B6C41F63F1541")
+                entity.HasIndex(e => e.NameOfService, "UQ__Services__370B6C41FF1469BA")
                     .IsUnique();
 
                 entity.Property(e => e.NameOfService)
@@ -94,7 +116,7 @@ namespace SalonDAL.Models
 
             modelBuilder.Entity<State>(entity =>
             {
-                entity.Property(e => e.OrderStatus).HasMaxLength(10);
+                entity.Property(e => e.OrderStatus).HasMaxLength(20);
             });
 
             OnModelCreatingPartial(modelBuilder);
