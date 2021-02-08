@@ -1,9 +1,8 @@
-﻿using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
+﻿using Salon.Abstractions.Interfaces;
+using SalonDAL.Models;
 using SalonEf;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Salon.Services.EfAproach
@@ -19,7 +18,7 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("List of customers:");
                     Console.WriteLine("{0, 5} {1, 20} {2, 20} {3, 15} {4, 30}", "ID", "Name", "Surname", "Phone number", "Email");
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(salonContext);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
                     IEnumerable<Customer> listOfCustomers = customerManager.GetList();
 
                     foreach (SalonDAL.Models.Customer c in listOfCustomers)
@@ -46,21 +45,15 @@ namespace Salon.Services.EfAproach
 
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfCustomers = salonContext.Customers.ToList();
-                    List<string> listOfPhones = new List<string>();
-                    List<string> listOfEmails = new List<string>();
-
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfPhones.Add(c.PhoneNumber);
-                        listOfEmails.Add(c.Email);
-                    }
+                    CustomerRepository customerRepository = new CustomerRepository(salonContext);
+                    List<string> listOfPhones = customerRepository.GetPhoneNumbers();
+                    List<string> listOfEmails = customerRepository.GetEmails();
 
                     Console.Write("Name: ");
                     customer.FirstName = Console.ReadLine();
                     while (string.IsNullOrWhiteSpace(customer.FirstName))
                     {
-                        Console.Write("Please enter correct name:");
+                        Console.Write($"Please enter correct name: ");
                         customer.FirstName = Console.ReadLine();
                     }
 
@@ -68,7 +61,7 @@ namespace Salon.Services.EfAproach
                     customer.LastName = Console.ReadLine();
                     while (string.IsNullOrWhiteSpace(customer.LastName))
                     {
-                        Console.Write("Please enter correct last name:");
+                        Console.Write("Please enter correct last name: ");
                         customer.LastName = Console.ReadLine();
                     }
 
@@ -102,7 +95,7 @@ namespace Salon.Services.EfAproach
                     }
                     customer.Email = email;
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(salonContext);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
                     Customer addedCustomer = customerManager.Add(customer);
                 }
 
@@ -127,18 +120,10 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of customer you want to update:");
                 using(SalonContext salonContext = new SalonContext())
                 {
-                    var listOfCustomers = salonContext.Customers.ToList();
-
-                    List<int> listOfIDs = new List<int>();
-                    List<string> listOfPhones = new List<string>();
-                    List<string> listOfEmails = new List<string>();
-
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfIDs.Add(c.Id);
-                        listOfPhones.Add(c.PhoneNumber);
-                        listOfEmails.Add(c.Email);
-                    }
+                    CustomerRepository customerRepository = new CustomerRepository(salonContext);
+                    List<string> listOfPhones = customerRepository.GetPhoneNumbers();
+                    List<string> listOfEmails = customerRepository.GetEmails();
+                    List<int> listOfIDs = customerRepository.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int idOfCustomer;
@@ -149,7 +134,7 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(salonContext);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
 
                     Customer selectedCustomer = customerManager.GetSingle(idOfCustomer);
 
@@ -265,12 +250,9 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of customer you want to delete:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfCustomers = salonContext.Customers.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+
+                    CustomerRepository customerRepository = new CustomerRepository(salonContext);
+                    List<int> listOfIDs = customerRepository.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfCustomer;
@@ -281,7 +263,7 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(salonContext);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
                     customerManager.Delete(idOfCustomer);
 
                     Console.WriteLine($"Customer with ID {idToDelete} deleted.");

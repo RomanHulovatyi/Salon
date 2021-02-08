@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
+using Salon.Abstractions.Interfaces;
 using SalonAdo;
 using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,14 +17,14 @@ namespace Salon.Services.AdoAproach
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of services:");
-                    Console.WriteLine("{0, 5} {1, 35} {2, 10} ", "ID", "Name", "Surname");
+                    Console.WriteLine("{0, 5} {1, 50} {2, 10} ", "ID", "Service", "Price");
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(connection);
                     IEnumerable<Service> listOfServices = serviceManager.GetList();
 
                     foreach (SalonDAL.Models.Service c in listOfServices)
                     {
-                        Console.WriteLine("{0,5} {1,35} {2,10}", c.Id, c.NameOfService, c.Price);
+                        Console.WriteLine("{0,5} {1,50} {2,10}", c.Id, c.NameOfService, c.Price);
                     }
                 }
             }
@@ -64,7 +64,7 @@ namespace Salon.Services.AdoAproach
 
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(connection);
                     Service addedService = serviceManager.Add(service);
                 }
 
@@ -88,14 +88,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of service you want to update:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(connection);
 
-                    IEnumerable<Service> listOfServices = serviceManager.GetList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Service c in listOfServices)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    ServiceRepository checkIds = new ServiceRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int idOfService;
@@ -174,14 +170,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of service you want to delete:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(connection);
 
-                    IEnumerable<Service> listOfServices = serviceManager.GetList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Service c in listOfServices)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    ServiceRepository checkIds = new ServiceRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfService;

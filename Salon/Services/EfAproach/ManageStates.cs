@@ -1,5 +1,5 @@
-﻿using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
+﻿using Salon.Abstractions.Interfaces;
+using SalonDAL.Models;
 using SalonEf;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("List of states:");
                     Console.WriteLine("{0, 5} {1, 20} ", "ID", "Order status");
 
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateRepository(salonContext);
                     IEnumerable<State> listOfStates = stateManager.GetList();
 
                     foreach (SalonDAL.Models.State c in listOfStates)
@@ -53,7 +53,7 @@ namespace Salon.Services.EfAproach
 
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateRepository(salonContext);
                     State addedState = stateManager.Add(state);
                 }
 
@@ -77,12 +77,8 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of state you want to update:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfStates = salonContext.States.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.State c in listOfStates)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    StateRepository stateRepository = new StateRepository(salonContext);
+                    List<int> listOfIDs = stateRepository.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int idOfState;
@@ -93,7 +89,7 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateRepository(salonContext);
 
                     State selectedState = stateManager.GetSingle(idOfState);
 
@@ -131,12 +127,8 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of order status you want to delete:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfStates = salonContext.States.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.State c in listOfStates)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    StateRepository stateRepository = new StateRepository(salonContext);
+                    List<int> listOfIDs = stateRepository.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfState;
@@ -147,7 +139,7 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<State> stateManager = new StateManager(salonContext);
+                    ISalonManager<State> stateManager = new StateRepository(salonContext);
                     stateManager.Delete(idOfState);
 
                     Console.WriteLine($"Order status with ID {idToDelete} deleted.");

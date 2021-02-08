@@ -1,5 +1,5 @@
-﻿using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
+﻿using Salon.Abstractions.Interfaces;
+using SalonDAL.Models;
 using SalonEf;
 using System;
 using System.Collections.Generic;
@@ -18,24 +18,13 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("List of orders:");
                     Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", "ID", "Customer", "Service", "Price", "Date", "Status");
 
-                    OrderManager orderManager = new OrderManager(salonContext);
+                    OrderRepository orderManager = new OrderRepository(salonContext);
                     IEnumerable<OrderTable> listOfOrders = orderManager.GetView();
 
                     foreach (SalonDAL.Models.OrderTable c in listOfOrders)
                     {
                         Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", c.Id, c.Customer, c.Service, c.Price, c.Date, c.Status); ;
                     }
-
-                    //Console.WriteLine("List of orders:");
-                    //Console.WriteLine("{0, 5} {1, 20} {2, 35} {3, 35} {4, 15}", "ID", "Customer", "Service", "Date", "Status");
-
-                    //ISalonManager<Order> orderManager = new OrderManager(salonContext);
-                    //IEnumerable<Order> listOfOrders = orderManager.GetList();
-
-                    //foreach (SalonDAL.Models.Order c in listOfOrders)
-                    //{
-                    //    Console.WriteLine("{0,5} {1,20} {2,35} {3,35} {4,15}", c.Id, c.ServiceId, c.CustomerId, c.DateOfProcedure, c.StatusId); ;
-                    //}
                 }
             }
             catch (Exception ex)
@@ -56,13 +45,8 @@ namespace Salon.Services.EfAproach
 
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfServices = salonContext.Services.ToList();
-                    List<int> listOfServiceIds = new List<int>();
-
-                    foreach(SalonDAL.Models.Service c in listOfServices)
-                    {
-                        listOfServiceIds.Add(c.Id);
-                    }
+                    ServiceRepository serviceRepository = new ServiceRepository(salonContext);
+                    List<int> listOfServiceIds = serviceRepository.GetIds();
 
                     Console.WriteLine("Select service");
                     ManageServices.GetList();
@@ -78,13 +62,9 @@ namespace Salon.Services.EfAproach
                     order.ServiceId = selectedServiceId;
 
 
-                    var listOfCustomers = salonContext.Customers.ToList();
-                    List<int> listOfCustomerIds = new List<int>();
 
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfCustomerIds.Add(c.Id);
-                    }
+                    CustomerRepository customerRepository = new CustomerRepository(salonContext);
+                    List<int> listOfCustomerIds = customerRepository.GetIds();
 
                     Console.WriteLine("Select customer");
                     ManageCustomers.GetList();
@@ -115,7 +95,7 @@ namespace Salon.Services.EfAproach
 
                     order.StatusId = 6;
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
+                    ISalonManager<Order> orderManager = new OrderRepository(salonContext);
                     Order addedOrder = orderManager.Add(order);
                 }
 
@@ -140,14 +120,9 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of order you want to update:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfOrders = salonContext.Orders.ToList();
+                    OrderRepository orderRepository = new OrderRepository(salonContext);
+                    List<int> listOfIDs = orderRepository.GetIds();
 
-                    List<int> listOfIDs = new List<int>();
-
-                    foreach (SalonDAL.Models.Order c in listOfOrders)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
 
                     string idToUpdate = Console.ReadLine();
                     int OrderId;
@@ -158,7 +133,7 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
+                    ISalonManager<Order> orderManager = new OrderRepository(salonContext);
 
                     Order selectedOrder = orderManager.GetSingle(OrderId);
 
@@ -178,14 +153,8 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select new service");
                             ManageServices.GetList();
 
-                            var listOfServices = salonContext.Services.ToList();
-
-                            List<int> listOfServiceIDs = new List<int>();
-
-                            foreach (SalonDAL.Models.Service c in listOfServices)
-                            {
-                                listOfServiceIDs.Add(c.Id);
-                            }
+                            ServiceRepository serviceRepository = new ServiceRepository(salonContext);
+                            List<int> listOfServiceIDs = serviceRepository.GetIds();
 
                             Console.Write("Change service ID to:");
                             string serviceIdToUpdate = Console.ReadLine();
@@ -207,14 +176,9 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select new customer");
                             ManageCustomers.GetList();
 
-                            var listOfCustomers = salonContext.Customers.ToList();
+                            CustomerRepository customerRepository = new CustomerRepository(salonContext);
+                            List<int> listOfCustomerIDs = customerRepository.GetIds();
 
-                            List<int> listOfCustomerIDs = new List<int>();
-
-                            foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                            {
-                                listOfCustomerIDs.Add(c.Id);
-                            }
 
                             Console.Write("Change customer ID to:");
                             string customerIdToUpdate = Console.ReadLine();
@@ -253,14 +217,8 @@ namespace Salon.Services.EfAproach
                             Console.WriteLine("Select order status");
                             ManageStates.GetList();
 
-                            var listOfStates = salonContext.States.ToList();
-
-                            List<int> listOfStateIDs = new List<int>();
-
-                            foreach (SalonDAL.Models.State c in listOfStates)
-                            {
-                                listOfStateIDs.Add(c.Id);
-                            }
+                            StateRepository stateRepository = new StateRepository(salonContext);
+                            List<int> listOfStateIDs = stateRepository.GetIds();
 
                             Console.WriteLine($"Change status from {selectedOrder.StatusId} to: ");
 
@@ -309,12 +267,8 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of order you want to delete:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfOrders = salonContext.Orders.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Order c in listOfOrders)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    OrderRepository orderRepository = new OrderRepository(salonContext);
+                    List<int> listOfIDs = orderRepository.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfOrder;
@@ -325,7 +279,7 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Order> orderManager = new OrderManager(salonContext);
+                    ISalonManager<Order> orderManager = new OrderRepository(salonContext);
                     orderManager.Delete(idOfOrder);
 
                     Console.WriteLine($"Order with ID {idToDelete} deleted.");

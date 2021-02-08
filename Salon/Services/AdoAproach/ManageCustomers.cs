@@ -1,10 +1,12 @@
-﻿using Microsoft.Data.SqlClient;
-using SalonAdo;
-using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
+﻿
+using Salon.Abstractions.Interfaces;
+using Salon.ADO.DAL;
+using Salon.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data.SqlClient;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Salon.Services.AdoAproach
@@ -20,10 +22,10 @@ namespace Salon.Services.AdoAproach
                     Console.WriteLine("List of customers:");
                     Console.WriteLine("{0, 5} {1, 20} {2, 20} {3, 15} {4, 30}", "ID", "Name", "Surname", "Phone number", "Email");
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(connection);
                     IEnumerable<Customer> listOfCustomers = customerManager.GetList();
 
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
+                    foreach (Salon.Entities.Models.Customer c in listOfCustomers)
                     {
                         Console.WriteLine("{0,5} {1,20} {2,20} {3,15} {4,30}", c.Id, c.FirstName, c.LastName, c.PhoneNumber, c.Email);
                     }
@@ -47,23 +49,18 @@ namespace Salon.Services.AdoAproach
 
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(connection);
 
-                    IEnumerable<Customer> listOfCustomers = customerManager.GetList();
-                    List<string> listOfPhones = new List<string>();
-                    List<string> listOfEmails = new List<string>();
+                    CustomerRepository checkUniqueness = new CustomerRepository(connection);
+                    IEnumerable<string> listOfPhones = checkUniqueness.GetPhoneNumbers();
+                    IEnumerable<string> listOfEmails = checkUniqueness.GetEmails();
 
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfPhones.Add(c.PhoneNumber);
-                        listOfEmails.Add(c.Email);
-                    }
 
                     Console.Write("Name: ");
                     customer.FirstName = Console.ReadLine();
                     while (string.IsNullOrWhiteSpace(customer.FirstName))
                     {
-                        Console.Write("Please enter correct name:");
+                        Console.Write($"Please enter correct {nameof(customer.FirstName)}");
                         customer.FirstName = Console.ReadLine();
                     }
 
@@ -129,21 +126,14 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of customer you want to update:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(connection);
 
-                    IEnumerable<Customer> listOfCustomers = customerManager.GetList();
+                    CustomerRepository checkUniqueness = new CustomerRepository(connection);
+                    IEnumerable<int> listOfIDs = checkUniqueness.GetIds();
+                    IEnumerable<string> listOfPhones = checkUniqueness.GetPhoneNumbers();
+                    IEnumerable<string> listOfEmails = checkUniqueness.GetEmails();
 
-                    List<int> listOfIDs = new List<int>();
-                    List<string> listOfPhones = new List<string>();
-                    List<string> listOfEmails = new List<string>();
-
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfIDs.Add(c.Id);
-                        listOfPhones.Add(c.PhoneNumber);
-                        listOfEmails.Add(c.Email);
-                    }
-
+                    
                     string idToUpdate = Console.ReadLine();
                     int idOfCustomer;
 
@@ -267,15 +257,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of customer you want to delete:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(connection);
 
-                    IEnumerable<Customer> listOfCustomers = customerManager.GetList();
-
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    CustomerRepository checkIds = new CustomerRepository(connection);
+                    IEnumerable<int> listOfIDs = checkIds.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfCustomer;

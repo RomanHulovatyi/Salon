@@ -3,13 +3,25 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salon", "Salon\Salon.csproj", "{AE5E2905-8F38-4C73-92EB-B1954B8C06FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.ConsoleApplication", "Salon\Salon.ConsoleApplication.csproj", "{AE5E2905-8F38-4C73-92EB-B1954B8C06FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalonDAL", "SalonDAL\SalonDAL.csproj", "{298722E4-C568-4F86-859C-2B01BE9F5170}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.EntityFramework.DAL", "SalonDAL\Salon.EntityFramework.DAL.csproj", "{298722E4-C568-4F86-859C-2B01BE9F5170}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalonEf", "SalonEf\SalonEf.csproj", "{6FB9F584-E08E-4E64-AF3A-D8F17F166D63}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.Entities", "SalonEf\Salon.Entities.csproj", "{6FB9F584-E08E-4E64-AF3A-D8F17F166D63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SalonAdo", "SalonAdo\SalonAdo.csproj", "{5E335EEB-32EA-47D5-BE8B-1CBE88E1B53D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.ADO.DAL", "SalonAdo\Salon.ADO.DAL.csproj", "{5E335EEB-32EA-47D5-BE8B-1CBE88E1B53D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.Abstractions", "Salon.Abstractions\Salon.Abstractions.csproj", "{F1135F3F-BABE-416E-98FB-C75B4E911E66}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.Web", "Salon.Web\Salon.Web.csproj", "{6F305C9A-EE00-4375-9F05-693AF21A2650}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.BLL", "Salon.BLL\Salon.BLL.csproj", "{BCFA2B01-A3C0-47CB-AD9F-FD5D6D6F4AF6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.NUnitTests", "Salon.NUnitTests\Salon.NUnitTests.csproj", "{7BAE651F-E9F5-4DD6-9FF3-61214FB0C992}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.Validation", "Salon.Validation\Salon.Validation.csproj", "{E624BFE1-7A6B-4CBF-9F18-866C476233AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salon.DTO", "Salon.DTO\Salon.DTO.csproj", "{F9C56172-46A0-480C-9349-F6C25C5DF181}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +45,30 @@ Global
 		{5E335EEB-32EA-47D5-BE8B-1CBE88E1B53D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5E335EEB-32EA-47D5-BE8B-1CBE88E1B53D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5E335EEB-32EA-47D5-BE8B-1CBE88E1B53D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1135F3F-BABE-416E-98FB-C75B4E911E66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1135F3F-BABE-416E-98FB-C75B4E911E66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1135F3F-BABE-416E-98FB-C75B4E911E66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1135F3F-BABE-416E-98FB-C75B4E911E66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F305C9A-EE00-4375-9F05-693AF21A2650}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F305C9A-EE00-4375-9F05-693AF21A2650}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F305C9A-EE00-4375-9F05-693AF21A2650}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F305C9A-EE00-4375-9F05-693AF21A2650}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCFA2B01-A3C0-47CB-AD9F-FD5D6D6F4AF6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCFA2B01-A3C0-47CB-AD9F-FD5D6D6F4AF6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCFA2B01-A3C0-47CB-AD9F-FD5D6D6F4AF6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCFA2B01-A3C0-47CB-AD9F-FD5D6D6F4AF6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BAE651F-E9F5-4DD6-9FF3-61214FB0C992}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BAE651F-E9F5-4DD6-9FF3-61214FB0C992}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BAE651F-E9F5-4DD6-9FF3-61214FB0C992}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BAE651F-E9F5-4DD6-9FF3-61214FB0C992}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

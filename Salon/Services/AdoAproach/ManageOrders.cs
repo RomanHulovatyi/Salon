@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
+using Salon.Abstractions.Interfaces;
 using SalonAdo;
 using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -17,15 +17,13 @@ namespace Salon.Services.AdoAproach
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
                     Console.WriteLine("List of orders:");
-                    //Console.WriteLine("{0, 5} {1, 20} {2, 35} {3, 35} {4, 15}", "ID", "Customer", "Service", "Date", "Status");
                     Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", "ID", "Customer", "Service", "Price", "Date", "Status");
 
-                    OrderManager orderManager = new OrderManager(connection);
+                    OrderRepository orderManager = new OrderRepository(connection);
                     IEnumerable<OrderTable> listOfOrders = orderManager.GetView();
 
                     foreach (SalonDAL.Models.OrderTable c in listOfOrders)
                     {
-                        //Console.WriteLine("{0,5} {1,20} {2,35} {3,35} {4,15}", c.Id, c.ServiceId, c.CustomerId, c.DateOfProcedure, c.StatusId);
                         Console.WriteLine("{0,4} {1,20} {2,50} {3,7} {4,20} {5,15}", c.Id, c.Customer, c.Service, c.Price, c.Date, c.Status); ;
 
                     }
@@ -49,7 +47,7 @@ namespace Salon.Services.AdoAproach
 
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(connection);
 
                     IEnumerable<Service> listOfServices = serviceManager.GetList();
                     List<int> listOfServiceIds = new List<int>();
@@ -72,7 +70,7 @@ namespace Salon.Services.AdoAproach
                     }
                     order.ServiceId = selectedServiceId;
 
-                    ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                    ISalonManager<Customer> customerManager = new CustomerRepository(connection);
                     IEnumerable<Customer> listOfCustomers = customerManager.GetList();
                     List<int> listOfCustomerIds = new List<int>();
 
@@ -110,7 +108,7 @@ namespace Salon.Services.AdoAproach
 
                     order.StatusId = 6;
 
-                    ISalonManager<Order> orderManager = new OrderManager(connection);
+                    ISalonManager<Order> orderManager = new OrderRepository(connection);
                     Order addedOrder = orderManager.Add(order);
                 }
 
@@ -135,15 +133,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of order you want to update:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Order> orderManager = new OrderManager(connection);
-                    IEnumerable<Order> listOfOrders = orderManager.GetList();
+                    ISalonManager<Order> orderManager = new OrderRepository(connection);
 
-                    List<int> listOfIDs = new List<int>();
-
-                    foreach (SalonDAL.Models.Order c in listOfOrders)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    OrderRepository checkIds = new OrderRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int OrderId;
@@ -166,22 +159,26 @@ namespace Salon.Services.AdoAproach
                     Console.Write("Enter number of action:");
                     string input = Console.ReadLine();
 
+                    //TODO
                     switch (input)
                     {
                         case "1":
                             Console.WriteLine("Select new service");
                             ManageServices.GetList();
 
-                            ISalonManager<Service> serviceManager = new ServiceManager(connection);
+                            ServiceRepository checkServiceIds = new ServiceRepository(connection);
+                            List<int> listOfServiceIDs = checkServiceIds.GetIds();
 
-                            IEnumerable<Service> listOfServices = serviceManager.GetList();
+                            //ISalonManager<Service> serviceManager = new ServiceRepository(connection);
 
-                            List<int> listOfServiceIDs = new List<int>();
+                            //IEnumerable<Service> listOfServices = serviceManager.GetList();
 
-                            foreach (SalonDAL.Models.Service c in listOfServices)
-                            {
-                                listOfServiceIDs.Add(c.Id);
-                            }
+                            //List<int> listOfServiceIDs = new List<int>();
+
+                            //foreach (SalonDAL.Models.Service c in listOfServices)
+                            //{
+                            //    listOfServiceIDs.Add(c.Id);
+                            //}
 
                             Console.Write("Change service ID to:");
                             string serviceIdToUpdate = Console.ReadLine();
@@ -203,16 +200,19 @@ namespace Salon.Services.AdoAproach
                             Console.WriteLine("Select new customer");
                             ManageCustomers.GetList();
 
-                            ISalonManager<Customer> customerManager = new CustomerManager(connection);
+                            CustomerRepository checkCustomerIds = new CustomerRepository(connection);
+                            List<int> listOfCustomerIDs = checkCustomerIds.GetIds();
 
-                            IEnumerable<Customer> listOfCustomers = customerManager.GetList();
+                            //ISalonManager<Customer> customerManager = new CustomerRepository(connection);
 
-                            List<int> listOfCustomerIDs = new List<int>();
+                            //IEnumerable<Customer> listOfCustomers = customerManager.GetList();
 
-                            foreach (SalonDAL.Models.Customer c in listOfCustomers)
-                            {
-                                listOfCustomerIDs.Add(c.Id);
-                            }
+                            //List<int> listOfCustomerIDs = new List<int>();
+
+                            //foreach (SalonDAL.Models.Customer c in listOfCustomers)
+                            //{
+                            //    listOfCustomerIDs.Add(c.Id);
+                            //}
 
                             Console.Write("Change customer ID to:");
                             string customerIdToUpdate = Console.ReadLine();
@@ -251,16 +251,19 @@ namespace Salon.Services.AdoAproach
                             Console.WriteLine("Select order status");
                             ManageStates.GetList();
 
-                            ISalonManager<State> stateManager = new StateManager(connection);
+                            StateRepository checkStateIds = new StateRepository(connection);
+                            List<int> listOfStateIDs = checkStateIds.GetIds();
 
-                            IEnumerable<State> listOfStates = stateManager.GetList();
+                            //ISalonManager<State> stateManager = new StateRepository(connection);
 
-                            List<int> listOfStateIDs = new List<int>();
+                            //IEnumerable<State> listOfStates = stateManager.GetList();
 
-                            foreach (SalonDAL.Models.State c in listOfStates)
-                            {
-                                listOfStateIDs.Add(c.Id);
-                            }
+                            //List<int> listOfStateIDs = new List<int>();
+
+                            //foreach (SalonDAL.Models.State c in listOfStates)
+                            //{
+                            //    listOfStateIDs.Add(c.Id);
+                            //}
 
                             Console.WriteLine($"Change status from {selectedOrder.StatusId} to: ");
 
@@ -269,7 +272,7 @@ namespace Salon.Services.AdoAproach
                             while (!Int32.TryParse(stateIdToUpdate, out intStateIdToUpdate)
                                 || !listOfStateIDs.Contains(intStateIdToUpdate))
                             {
-                                Console.Write("Incorrect value! Please enter a valid service ID: ");
+                                Console.Write("Incorrect value! Please enter a valid status ID: ");
                                 stateIdToUpdate = Console.ReadLine();
                             }
 
@@ -309,14 +312,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of order you want to delete:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<Order> orderManager = new OrderManager(connection);
+                    ISalonManager<Order> orderManager = new OrderRepository(connection);
 
-                    IEnumerable<Order> listOfOrders = orderManager.GetList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Order c in listOfOrders)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    OrderRepository checkIds = new OrderRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfOrder;

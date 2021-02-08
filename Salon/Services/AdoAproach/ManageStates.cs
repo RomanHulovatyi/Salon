@@ -1,7 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
+using Salon.Abstractions.Interfaces;
 using SalonAdo;
 using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -19,7 +19,7 @@ namespace Salon.Services.AdoAproach
                     Console.WriteLine("List of states:");
                     Console.WriteLine("{0, 5} {1, 20} ", "ID", "Order status");
 
-                    ISalonManager<State> stateManager = new StateManager(connection);
+                    ISalonManager<State> stateManager = new StateRepository(connection);
                     IEnumerable<State> listOfStates = stateManager.GetList();
 
                     foreach (SalonDAL.Models.State c in listOfStates)
@@ -53,7 +53,7 @@ namespace Salon.Services.AdoAproach
 
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<State> stateManager = new StateManager(connection);
+                    ISalonManager<State> stateManager = new StateRepository(connection);
                     State addedState = stateManager.Add(state);
                 }
 
@@ -77,14 +77,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of state you want to update:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<State> stateManager = new StateManager(connection);
+                    ISalonManager<State> stateManager = new StateRepository(connection);
 
-                    IEnumerable<State> listOfStates = stateManager.GetList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.State c in listOfStates)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    StateRepository checkIds = new StateRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int idOfState;
@@ -131,14 +127,10 @@ namespace Salon.Services.AdoAproach
                 Console.Write("Enter ID of order status you want to delete:");
                 using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString))
                 {
-                    ISalonManager<State> stateManager = new StateManager(connection);
+                    ISalonManager<State> stateManager = new StateRepository(connection);
 
-                    IEnumerable<State> listOfStates = stateManager.GetList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.State c in listOfStates)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    StateRepository checkIds = new StateRepository(connection);
+                    List<int> listOfIDs = checkIds.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfState;

@@ -1,5 +1,5 @@
-﻿using SalonDAL.Models;
-using SalonDAL.Models.Interfaces;
+﻿using Salon.Abstractions.Interfaces;
+using SalonDAL.Models;
 using SalonEf;
 using System;
 using System.Collections.Generic;
@@ -18,7 +18,7 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("List of services:");
                     Console.WriteLine("{0, 5} {1, 35} {2, 10} ", "ID", "Name", "Surname");
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(salonContext);
                     IEnumerable<Service> listOfServices = serviceManager.GetList();
 
                     foreach (SalonDAL.Models.Service c in listOfServices)
@@ -63,7 +63,7 @@ namespace Salon.Services.EfAproach
 
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(salonContext);
                     Service addedService = serviceManager.Add(service);
                 }
 
@@ -84,15 +84,11 @@ namespace Salon.Services.EfAproach
                 Console.WriteLine("Please select service to update:");
                 GetList();
 
-                Console.Write("Enter ID of service you want to update:");
+                Console.Write("Enter ID of service you want to update: ");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfServices = salonContext.Services.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Service c in listOfServices)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    ServiceRepository serviceRepository = new ServiceRepository(salonContext);
+                    List<int> listOfIDs = serviceRepository.GetIds();
 
                     string idToUpdate = Console.ReadLine();
                     int idOfService;
@@ -103,7 +99,7 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(salonContext);
 
                     Service selectedService = serviceManager.GetSingle(idOfService);
 
@@ -112,7 +108,7 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("Select what you want to change:");
                     Console.WriteLine($"1. Change name of service");
                     Console.WriteLine($"2. Change price");
-                    Console.Write("Enter number of action:");
+                    Console.Write("Enter number of action: ");
                     string input = Console.ReadLine();
 
                     switch (input)
@@ -122,7 +118,7 @@ namespace Salon.Services.EfAproach
                             serviceToUpdate.NameOfService = Console.ReadLine();
                             while (string.IsNullOrWhiteSpace(serviceToUpdate.NameOfService))
                             {
-                                Console.Write("Please enter correct name of service:");
+                                Console.Write("Please enter correct name of service: ");
                                 serviceToUpdate.NameOfService = Console.ReadLine();
                             }
 
@@ -172,12 +168,8 @@ namespace Salon.Services.EfAproach
                 Console.Write("Enter ID of service you want to delete:");
                 using (SalonContext salonContext = new SalonContext())
                 {
-                    var listOfServices = salonContext.Services.ToList();
-                    List<int> listOfIDs = new List<int>();
-                    foreach (SalonDAL.Models.Service c in listOfServices)
-                    {
-                        listOfIDs.Add(c.Id);
-                    }
+                    ServiceRepository serviceRepository = new ServiceRepository(salonContext);
+                    List<int> listOfIDs = serviceRepository.GetIds();
 
                     string idToDelete = Console.ReadLine();
                     int idOfService;
@@ -188,7 +180,7 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Service> serviceManager = new ServiceManager(salonContext);
+                    ISalonManager<Service> serviceManager = new ServiceRepository(salonContext);
                     serviceManager.Delete(idOfService);
 
                     Console.WriteLine($"Service with ID {idToDelete} deleted.");
