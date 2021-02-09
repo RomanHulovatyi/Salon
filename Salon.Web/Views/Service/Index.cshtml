@@ -1,4 +1,4 @@
-﻿@model Salon.BLL.ViewModels.IndexViewModel
+﻿@model Salon.BLL.ViewModels.ServiceIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
@@ -13,24 +13,29 @@
     <thead>
         <tr>
             <th>
-                Customer
+                ID
             </th>
             <th>
-                Phone
+                Service name
+            </th>
+            <th>
+                Price
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Customer)
+        @foreach (var item in Model.Service)
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.FirstName)
-                    @Html.DisplayFor(modelItem => item.LastName)
+                    @Html.DisplayFor(modelItem => item.Id)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.PhoneNumber)
+                    @Html.DisplayFor(modelItem => item.NameOfService)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Price)
                 </td>
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
@@ -39,8 +44,6 @@
                 </td>
             </tr>
         }
-
-
     </tbody>
 </table>
 @if (Model.PageViewModel.HasPreviousPage)

@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Salon.BLL.Interfaces;
-//using Salon.Entities.Models;
-using Salon.DTO;
+using Salon.BLL.ViewModels;
+using Salon.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,38 +21,31 @@ namespace Salon.Web.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
-            IEnumerable<Salon.DTO.Customer> customers = _customerManager.GetCustomers();
+            var customers = _customerManager.GetCustomers(page);
+             
             return View(customers);
         }
 
         [HttpGet]
         public IActionResult Details(int? id)
         {
-            Salon.DTO.Customer customer = _customerManager.GetCustomer((int)id);
+            var customer = _customerManager.GetCustomer((int)id);
             return View(customer);
         }
 
         [HttpGet]
         public ViewResult Edit(int id)
         {
-            Salon.DTO.Customer customer = _customerManager.GetCustomer((int)id);
+            var customer = _customerManager.GetCustomer((int)id);
             return View(customer);
         }
 
         [HttpPost]
-        public IActionResult Edit(Customer customer)
+        public IActionResult Edit(CustomerViewModel customer)
         {
-            Customer customerToUpdate = new Customer 
-            {
-                FirstName = customer.FirstName,
-                LastName = customer.LastName,
-                PhoneNumber = customer.PhoneNumber,
-                Email = customer.Email
-            };
-
-            Salon.DTO.Customer updatedCustomer = _customerManager.UpdateCustomer(customer.Id, customerToUpdate);
+            var updatedCustomer = _customerManager.UpdateCustomer(customer.Id, customer);
             return RedirectToAction("Index");
         }
 
@@ -61,7 +55,7 @@ namespace Salon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Customer customer)
+        public IActionResult Create(CustomerViewModel customer)
         {
             var createdCustomer = _customerManager.AddCustomer(customer);
             return RedirectToAction("Index");
@@ -75,9 +69,9 @@ namespace Salon.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Delete(Salon.DTO.Customer customer)
+        public IActionResult Delete(CustomerViewModel customer)
         {
-            string deletedCustomer = _customerManager.DeleteCustomer(customer.Id);
+            var deletedCustomer = _customerManager.DeleteCustomer(customer.Id);
             return RedirectToAction("Index");
         }
     }

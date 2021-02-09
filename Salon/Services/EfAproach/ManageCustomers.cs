@@ -18,7 +18,7 @@ namespace Salon.Services.EfAproach
                     Console.WriteLine("List of customers:");
                     Console.WriteLine("{0, 5} {1, 20} {2, 20} {3, 15} {4, 30}", "ID", "Name", "Surname", "Phone number", "Email");
 
-                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
+                    CustomerRepository customerManager = new CustomerRepository(salonContext);
                     IEnumerable<Customer> listOfCustomers = customerManager.GetList();
 
                     foreach (SalonDAL.Models.Customer c in listOfCustomers)
@@ -82,12 +82,12 @@ namespace Salon.Services.EfAproach
 
                     Console.Write("Email:");
                     string email = Console.ReadLine();
-                    while (!EmailValidation.IsValidEmail(email))
-                    {
-                        Console.WriteLine("Wrong email!");
-                        Console.Write("Try again: ");
-                        email = Console.ReadLine();
-                    }
+                    //while (!EmailValidation.IsValidEmail(email))
+                    //{
+                    //    Console.WriteLine("Wrong email!");
+                    //    Console.Write("Try again: ");
+                    //    email = Console.ReadLine();
+                    //}
                     while (listOfEmails.Contains(email))
                     {
                         Console.Write("This email is already taken! Try another one: ");
@@ -95,7 +95,7 @@ namespace Salon.Services.EfAproach
                     }
                     customer.Email = email;
 
-                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
+                    CustomerRepository customerManager = new CustomerRepository(salonContext);
                     Customer addedCustomer = customerManager.Add(customer);
                 }
 
@@ -134,7 +134,7 @@ namespace Salon.Services.EfAproach
                         idToUpdate = Console.ReadLine();
                     }
 
-                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
+                    CustomerRepository customerManager = new CustomerRepository(salonContext);
 
                     Customer selectedCustomer = customerManager.GetSingle(idOfCustomer);
 
@@ -207,12 +207,12 @@ namespace Salon.Services.EfAproach
                             customerToUpdate.PhoneNumber = selectedCustomer.PhoneNumber;
 
                             string email = Console.ReadLine();
-                            while (!EmailValidation.IsValidEmail(email))
-                            {
-                                Console.WriteLine("Wrong email!");
-                                Console.Write("Try again: ");
-                                email = Console.ReadLine();
-                            }
+                            //while (!EmailValidation.IsValidEmail(email))
+                            //{
+                            //    Console.WriteLine("Wrong email!");
+                            //    Console.Write("Try again: ");
+                            //    email = Console.ReadLine();
+                            //}
                             while (listOfEmails.Contains(email))
                             {
                                 Console.Write("This email is already taken! Try another one: ");
@@ -263,7 +263,7 @@ namespace Salon.Services.EfAproach
                         idToDelete = Console.ReadLine();
                     }
 
-                    ISalonManager<Customer> customerManager = new CustomerRepository(salonContext);
+                    CustomerRepository customerManager = new CustomerRepository(salonContext);
                     customerManager.Delete(idOfCustomer);
 
                     Console.WriteLine($"Customer with ID {idToDelete} deleted.");

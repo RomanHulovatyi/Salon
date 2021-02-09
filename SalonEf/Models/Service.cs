@@ -10,6 +10,6 @@ namespace Salon.Entities.Models
     {
         public int Id { get; set; }
         public string NameOfService { get; set; }
-        public decimal? Price { get; set; }
+        public decimal Price { get; set; }
     }
 }

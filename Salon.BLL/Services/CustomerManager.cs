@@ -2,26 +2,23 @@
 using Salon.ADO.DAL;
 using Salon.BLL.Interfaces;
 using Salon.Entities.Models;
-using Salon.DTO;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Salon.BLL.ViewModels;
 
 namespace Salon.BLL.Services
 {
     public class CustomerManager : ICustomerManager
     {
-        public Salon.DTO.Customer AddCustomer(Salon.DTO.Customer customer)
+        public CustomerViewModel AddCustomer(CustomerViewModel customer)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
                 {
-                    ISalonManager<Salon.Entities.Models.Customer> salon = new CustomerRepository(connection);
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
 
                     //CustomerRepository checkUniqueness = new CustomerRepository(connection);
                     //IEnumerable<string> listOfPhones = checkUniqueness.GetPhoneNumbers();
@@ -37,7 +34,7 @@ namespace Salon.BLL.Services
                     //    throw new Exception("This email is already taken");
                     //}
 
-                    Salon.Entities.Models.Customer newCustomer = new Salon.Entities.Models.Customer
+                    Customer newCustomer = new Customer
                     {
                         FirstName = customer.FirstName,
                         LastName = customer.LastName,
@@ -45,10 +42,9 @@ namespace Salon.BLL.Services
                         Email = customer.Email
                     };
 
-                    Salon.Entities.Models.Customer createdCustomer = salon.Add(newCustomer);
+                    Customer createdCustomer = salon.Add(newCustomer);
 
-
-                    Salon.DTO.Customer customerDTO = new Salon.DTO.Customer
+                    CustomerViewModel customerViewModel = new CustomerViewModel
                     {
                         Id = createdCustomer.Id,
                         FirstName = createdCustomer.FirstName,
@@ -57,7 +53,7 @@ namespace Salon.BLL.Services
                         Email = createdCustomer.Email
                     };
 
-                    return customerDTO;
+                    return customerViewModel;
                 }
             }
             catch(Exception ex)
@@ -72,7 +68,7 @@ namespace Salon.BLL.Services
             {
                 using (SqlConnection connection = new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
                 {
-                    ISalonManager<Salon.Entities.Models.Customer> salon = new CustomerRepository(connection);
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
 
                     CustomerRepository customerRepository = new CustomerRepository(connection);
                     IEnumerable<int> listOfIds = customerRepository.GetIds();
@@ -94,22 +90,22 @@ namespace Salon.BLL.Services
             }
         }
 
-        public Salon.DTO.Customer GetCustomer(int id)
+        public CustomerViewModel GetCustomer(int id)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
                 {
-                    ISalonManager<Salon.Entities.Models.Customer> salon = new CustomerRepository(connection);
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
 
                     CustomerRepository customerRepository = new CustomerRepository(connection);
                     IEnumerable<int> listOfIds = customerRepository.GetIds();
 
                     if (listOfIds.Contains(id))
                     {
-                        Salon.Entities.Models.Customer selectedCustomer = salon.GetSingle(id);
+                        Customer selectedCustomer = salon.GetSingle(id);
 
-                        Salon.DTO.Customer customerDTO = new DTO.Customer
+                        CustomerViewModel customerViewModel = new CustomerViewModel
                         {
                             Id = selectedCustomer.Id,
                             FirstName = selectedCustomer.FirstName,
@@ -118,7 +114,7 @@ namespace Salon.BLL.Services
                             Email = selectedCustomer.Email
                         };
 
-                        return customerDTO;
+                        return customerViewModel;
                     }
                     else
                     {
@@ -132,21 +128,26 @@ namespace Salon.BLL.Services
             }
         }
 
-        public IEnumerable<Salon.DTO.Customer> GetCustomers()
+        public IndexViewModel GetCustomers(int page = 1)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
                 {
-                    ISalonManager<Salon.Entities.Models.Customer> salon = new CustomerRepository(connection);
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
 
-                    IEnumerable<Entities.Models.Customer> customers = salon.GetList();
+                    IEnumerable<Customer> customers = salon.GetList();
 
-                    List<DTO.Customer> customersDTO = new List<DTO.Customer>();
+                    var count = customers.Count();
 
-                    foreach (Entities.Models.Customer c in customers)
+                    int pageSize = 8;
+
+                    var items = customers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                    List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
+                    foreach (Customer c in items)
                     {
-                        customersDTO.Add(new DTO.Customer
+                        customersVM.Add(new CustomerViewModel
                         {
                             Id = c.Id,
                             FirstName = c.FirstName,
@@ -156,7 +157,14 @@ namespace Salon.BLL.Services
                         });
                     }
 
-                    return customersDTO;
+                    PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+                    IndexViewModel viewModel = new IndexViewModel
+                    {
+                        PageViewModel = pageViewModel,
+                        Customer = customersVM
+                    };
+
+                    return viewModel;
                 }
             }
             catch (Exception ex)
@@ -165,14 +173,14 @@ namespace Salon.BLL.Services
             }
         }
 
-        public Salon.DTO.Customer UpdateCustomer(int id, Salon.DTO.Customer customer)
+        public CustomerViewModel UpdateCustomer(int id, CustomerViewModel customer)
         {
             try
             {
                 using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
                 {
-                    ISalonManager<Salon.Entities.Models.Customer> salon = new CustomerRepository(connection);
-                    Entities.Models.Customer customerSelected = salon.GetSingle(id);
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
+                    Customer customerSelected = salon.GetSingle(id);
 
                     //CustomerRepository customerRepository = new CustomerRepository(connection);
                     //IEnumerable<int> listOfIds = customerRepository.GetIds();
@@ -197,7 +205,7 @@ namespace Salon.BLL.Services
                     //}
 
 
-                    Salon.Entities.Models.Customer customerToUpdate = new Entities.Models.Customer
+                    Customer customerToUpdate = new Customer
                     {
                         FirstName = customer.FirstName,
                         LastName = customer.LastName,
@@ -205,17 +213,18 @@ namespace Salon.BLL.Services
                         Email = customer.Email
                     };
 
-                    Entities.Models.Customer updatedCustomer = salon.Update(id, customerToUpdate);
+                    Customer updatedCustomer = salon.Update(id, customerToUpdate);
 
-                    DTO.Customer updatedCustomerDTO = new DTO.Customer 
+
+                    CustomerViewModel customerViewModel = new CustomerViewModel
                     {
-                        Id = updatedCustomer.Id,
                         FirstName = updatedCustomer.FirstName,
                         LastName = updatedCustomer.LastName,
                         PhoneNumber = updatedCustomer.PhoneNumber,
                         Email = updatedCustomer.Email
                     };
-                    return updatedCustomerDTO;
+
+                    return customerViewModel;
                 }
             }
             catch (Exception ex)

@@ -1,4 +1,6 @@
-﻿using Salon.DTO;
+﻿
+using Salon.BLL.ViewModels;
+using Salon.Entities.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +11,10 @@ namespace Salon.BLL.Interfaces
 {
     public interface ICustomerManager
     {
-        public DTO.Customer AddCustomer(DTO.Customer customer);
-        public IEnumerable<DTO.Customer> GetCustomers();
-        public DTO.Customer GetCustomer(int id);
-        public DTO.Customer UpdateCustomer(int id, DTO.Customer customer);
+        public CustomerViewModel AddCustomer(CustomerViewModel customer);
+        public IndexViewModel GetCustomers(int page);
+        public CustomerViewModel GetCustomer(int id);
+        public CustomerViewModel UpdateCustomer(int id, CustomerViewModel customer);
         public string DeleteCustomer(int id);
     }
 }

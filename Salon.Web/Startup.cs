@@ -5,12 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Salon.BLL.Interfaces;
 using Salon.BLL.Services;
-using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Salon.Web.Profiles;
 
 namespace Salon.Web
 {
@@ -28,11 +22,9 @@ namespace Salon.Web
         {
             services.AddControllersWithViews();
 
-            services.AddAutoMapper(typeof(CustomerProfiler));
-
             services.AddTransient<ICustomerManager, CustomerManager>();
+            services.AddTransient<IServiceManager, ServiceManager>();
 
-            
         }
 
 

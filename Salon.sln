@@ -21,8 +21,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.NUnitTests", "Salon.N
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Salon.Validation", "Salon.Validation\Salon.Validation.csproj", "{E624BFE1-7A6B-4CBF-9F18-866C476233AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Salon.DTO", "Salon.DTO\Salon.DTO.csproj", "{F9C56172-46A0-480C-9349-F6C25C5DF181}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,10 +63,6 @@ Global
 		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E624BFE1-7A6B-4CBF-9F18-866C476233AA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F9C56172-46A0-480C-9349-F6C25C5DF181}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

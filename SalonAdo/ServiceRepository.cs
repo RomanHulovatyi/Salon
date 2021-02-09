@@ -24,7 +24,7 @@ namespace Salon.ADO.DAL
 
             string sqlExpression = $"INSERT INTO Services (NameOfService, Price) " +
                                     $"VALUES (N'{newService.NameOfService}', " +
-                                    $"N'{newService.Price}'";
+                                    $"{newService.Price})";
             _connection.Open();
 
             SqlCommand command = new SqlCommand(sqlExpression, _connection);

@@ -89,12 +89,12 @@ namespace Salon.Services.AdoAproach
 
                     Console.Write("Email:");
                     string email = Console.ReadLine();
-                    while (!EmailValidation.IsValidEmail(email))
-                    {
-                        Console.WriteLine("Wrong email!");
-                        Console.Write("Try again: ");
-                        email = Console.ReadLine();
-                    }
+                    //while (!EmailValidation.IsValidEmail(email))
+                    //{
+                    //    Console.WriteLine("Wrong email!");
+                    //    Console.Write("Try again: ");
+                    //    email = Console.ReadLine();
+                    //}
                     while (listOfEmails.Contains(email))
                     {
                         Console.Write("This email is already taken! Try another one: ");
@@ -214,12 +214,12 @@ namespace Salon.Services.AdoAproach
                             customerToUpdate.PhoneNumber = selectedCustomer.PhoneNumber;
 
                             string email = Console.ReadLine();
-                            while (!EmailValidation.IsValidEmail(email))
-                            {
-                                Console.WriteLine("Wrong email!");
-                                Console.Write("Try again: ");
-                                email = Console.ReadLine();
-                            }
+                            //while (!EmailValidation.IsValidEmail(email))
+                            //{
+                            //    Console.WriteLine("Wrong email!");
+                            //    Console.Write("Try again: ");
+                            //    email = Console.ReadLine();
+                            //}
                             while (listOfEmails.Contains(email))
                             {
                                 Console.Write("This email is already taken! Try another one: ");
