@@ -11,6 +11,7 @@ namespace Salon.BLL.Interfaces
     {
         public void AddService(ServiceViewModel customer);
         public ServiceIndexViewModel GetServices(int page);
+        public ServiceIndexViewModel GetServices();
         public ServiceViewModel GetService(int id);
         public ServiceViewModel UpdateService(int id, ServiceViewModel customer);
         public string DeleteService(int id);

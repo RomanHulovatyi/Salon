@@ -154,6 +154,41 @@ namespace Salon.BLL.Services
             }
         }
 
+        public ServiceIndexViewModel GetServices()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                {
+                    ISalonManager<Service> salon = new ServiceRepository(connection);
+
+                    IEnumerable<Service> customers = salon.GetList();           
+
+                    List<ServiceViewModel> servicesVM = new List<ServiceViewModel>();
+                    foreach (Service c in customers)
+                    {
+                        servicesVM.Add(new ServiceViewModel
+                        {
+                            Id = c.Id,
+                            NameOfService = c.NameOfService,
+                            Price = c.Price
+                        });
+                    }
+
+                    ServiceIndexViewModel viewModel = new ServiceIndexViewModel
+                    {
+                        Service = servicesVM.OrderBy(x => x.NameOfService)
+                    };
+
+                    return viewModel;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public ServiceViewModel UpdateService(int id, ServiceViewModel service)
         {
             try

@@ -173,6 +173,43 @@ namespace Salon.BLL.Services
             }
         }
 
+        public IndexViewModel GetCustomers()
+        {
+            try
+            {
+                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                {
+                    ISalonManager<Customer> salon = new CustomerRepository(connection);
+
+                    IEnumerable<Customer> customers = salon.GetList();
+
+                    List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
+                    foreach (Customer c in customers)
+                    {
+                        customersVM.Add(new CustomerViewModel
+                        {
+                            Id = c.Id,
+                            FirstName = c.FirstName,
+                            LastName = c.LastName,
+                            PhoneNumber = c.PhoneNumber,
+                            Email = c.Email
+                        });
+                    }
+
+                    IndexViewModel viewModel = new IndexViewModel
+                    {
+                        Customer = customersVM.OrderBy(x => x.FirstName)
+                    };
+
+                    return viewModel;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public CustomerViewModel UpdateCustomer(int id, CustomerViewModel customer)
         {
             try

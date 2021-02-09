@@ -24,6 +24,7 @@ namespace Salon.Web
 
             services.AddTransient<ICustomerManager, CustomerManager>();
             services.AddTransient<IServiceManager, ServiceManager>();
+            services.AddTransient<IOrderManager, OrderManager>();
 
         }
 

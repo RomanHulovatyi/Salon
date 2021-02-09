@@ -25,10 +25,10 @@ namespace Salon.ADO.DAL
             };
 
             string sqlExpression = $"INSERT INTO Orders (ServiceId, CustomerId, DateOfProcedure, StatusId) " +
-                                    $"VALUES (N'{newOrder.ServiceId}', " +
-                                    $"N'{newOrder.CustomerId}', " +
+                                    $"VALUES ('{newOrder.ServiceId}', " +
+                                    $"'{newOrder.CustomerId}', " +
                                     $"'{newOrder.DateOfProcedure}', " +
-                                    $"N'{newOrder.StatusId}')";
+                                    $"N'6')";
             _connection.Open();
 
             SqlCommand command = new SqlCommand(sqlExpression, _connection);
@@ -140,6 +140,37 @@ namespace Salon.ADO.DAL
             _connection.Close();
 
             return orderToUpdate;
+        }
+
+        public OrderView GetSingleView(int id)
+        {
+            string sqlExpression = "SELECT * FROM OrderTable WHERE Id = {id}";
+
+            OrderView order = new OrderView();
+
+            _connection.Open();
+
+            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlDataReader reader = command.ExecuteReader();
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                {
+                    order = new OrderView
+                    {
+                        Id = reader.GetInt32(0),
+                        Customer = reader.GetString(1),
+                        Service = reader.GetString(2),
+                        Price = reader.GetDecimal(3),
+                        Date = reader.GetDateTime(4),
+                        Status = reader.GetString(5)
+                    };
+                }
+            }
+
+            _connection.Close();
+
+            return order;
         }
 
         public IEnumerable<OrderView> GetView()

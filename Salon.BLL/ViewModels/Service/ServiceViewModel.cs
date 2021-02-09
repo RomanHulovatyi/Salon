@@ -19,7 +19,8 @@ namespace Salon.BLL.ViewModels
         //[RegularExpression(@"^\d+\.\d{0,2}$")]
         //[DataType(DataType.Currency)]
         //[Column(TypeName = "decimal(18, 2)")]
-        [RegularExpression(@"^[0-9]+(\.[0-9]{1,2})$", ErrorMessage = "Valid Decimal number with maximum 2 decimal places.")]
+        //[RegularExpression(@"^[0-9]+(\.[0-9]{1,2})$", ErrorMessage = "Valid Decimal number with maximum 2 decimal places.")]
+        [Range(typeof(decimal), "0,00", "10000,00")]
         public decimal Price { get; set; }
     }
 }
