@@ -20,20 +20,6 @@ namespace Salon.BLL.Services
                 {
                     ISalonManager<Customer> salon = new CustomerRepository(connection);
 
-                    //CustomerRepository checkUniqueness = new CustomerRepository(connection);
-                    //IEnumerable<string> listOfPhones = checkUniqueness.GetPhoneNumbers();
-                    //IEnumerable<string> listOfEmails = checkUniqueness.GetEmails();
-
-                    //if (listOfPhones.Contains(customer.PhoneNumber))
-                    //{
-                    //    throw new Exception("This phone number is already taken");
-                    //}
-
-                    //if (listOfEmails.Contains(customer.Email))
-                    //{
-                    //    throw new Exception("This email is already taken");
-                    //}
-
                     Customer newCustomer = new Customer
                     {
                         FirstName = customer.FirstName,
@@ -56,9 +42,9 @@ namespace Salon.BLL.Services
                     return customerViewModel;
                 }
             }
-            catch(Exception ex)
+            catch
             {
-                throw new Exception(ex.Message);
+                throw;
             }
         }
             

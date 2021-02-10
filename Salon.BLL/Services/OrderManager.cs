@@ -215,7 +215,7 @@ namespace Salon.BLL.Services
             }
         }
 
-        public void UpdateOrder(int id, OrderViewModel order)
+        public void UpdateOrder(int id, GlobalViewModel order)
         {
             try
             {
@@ -226,10 +226,10 @@ namespace Salon.BLL.Services
 
                     Order orderToUpdate = new Order
                     {
-                        ServiceId = order.Service.Id,
-                        CustomerId = order.Customer.Id,
+                        ServiceId = order.ServiceId,
+                        CustomerId = order.CustomerId,
                         DateOfProcedure = order.Date,
-                        StatusId = order.Status.Id,
+                        StatusId = order.StatusId,
                     };
 
                     Order updatedOrder = salon.Update(id, orderToUpdate);

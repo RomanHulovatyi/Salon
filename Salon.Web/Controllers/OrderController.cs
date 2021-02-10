@@ -14,12 +14,14 @@ namespace Salon.Web.Controllers
         private readonly IOrderManager _orderManager;
         private readonly IServiceManager _serviceManager;
         private readonly ICustomerManager _customerManager;
+        private readonly IStateManager _stateManager;
 
-        public OrderController(IOrderManager orderManager, IServiceManager serviceManager, ICustomerManager customerManager)
+        public OrderController(IOrderManager orderManager, IServiceManager serviceManager, ICustomerManager customerManager, IStateManager stateManager)
         {
             _orderManager = orderManager;
             _serviceManager = serviceManager;
             _customerManager = customerManager;
+            _stateManager = stateManager;
         }
 
         [HttpGet]
@@ -40,12 +42,28 @@ namespace Salon.Web.Controllers
         [HttpGet]
         public ViewResult Edit(int id)
         {
+            var customers = _customerManager.GetCustomers();
+            var services = _serviceManager.GetServices();
+            var states = _stateManager.GetStates();
             var order = _orderManager.GetOrder((int)id);
-            return View(order);
+
+            GlobalViewModel vm = new GlobalViewModel
+            {
+                Customer = customers.Customer,
+                Service = services.Service,
+                State = states,
+                Id = order.Id,
+                CustomerId = order.Customer.Id,
+                ServiceId = order.Service.Id,
+                Date = order.Date,
+                StatusId = order.Status.Id
+            };
+
+            return View(vm);
         }
 
         [HttpPost]
-        public IActionResult Edit(OrderViewModel order)
+        public IActionResult Edit(GlobalViewModel order)
         {
             _orderManager.UpdateOrder(order.Id, order);
             return RedirectToAction("Index");
