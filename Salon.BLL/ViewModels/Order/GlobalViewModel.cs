@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace Salon.BLL.ViewModels
 {
@@ -11,6 +9,7 @@ namespace Salon.BLL.ViewModels
         public int Id { get; set; }
         public int CustomerId { get; set; }
         public int ServiceId { get; set; }
+        [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
         public int StatusId { get; set; }
         public IEnumerable<CustomerViewModel> Customer { get; set; }

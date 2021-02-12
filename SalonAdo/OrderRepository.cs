@@ -1,4 +1,5 @@
 ﻿using Salon.Abstractions.Interfaces;
+using Salon.ADO.DAL.Connection;
 using Salon.Entities.Models;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,9 +8,9 @@ namespace Salon.ADO.DAL
 {
     public class OrderRepository : ISalonManager<Order>
     {
-        private readonly SqlConnection _connection;
+        private readonly ISqlConnectionFactory _connection;
 
-        public OrderRepository(SqlConnection connection)
+        public OrderRepository(ISqlConnectionFactory connection)
         {
             _connection = connection;
         }
@@ -29,12 +30,13 @@ namespace Salon.ADO.DAL
                                     $"'{newOrder.CustomerId}', " +
                                     $"'{newOrder.DateOfProcedure}', " +
                                     $"N'6')";
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
 
             return newOrder;
         }
@@ -43,12 +45,13 @@ namespace Salon.ADO.DAL
         {
             string sqlExpression = $"DELETE FROM Orders WHERE Id={id}";
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
         }
 
         public IEnumerable<Order> GetList()
@@ -57,9 +60,10 @@ namespace Salon.ADO.DAL
 
             List<Order> orders = new List<Order>();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -79,7 +83,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return orders;
         }
@@ -90,9 +94,10 @@ namespace Salon.ADO.DAL
 
             Order order = new Order();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -109,7 +114,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return order;
         }
@@ -132,12 +137,13 @@ namespace Salon.ADO.DAL
                                             $"StatusId = '{orderToUpdate.StatusId}' " +
                                             $"WHERE Id={id}";
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
 
             return orderToUpdate;
         }
@@ -148,9 +154,10 @@ namespace Salon.ADO.DAL
 
             OrderView order = new OrderView();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -168,7 +175,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return order;
         }
@@ -179,9 +186,10 @@ namespace Salon.ADO.DAL
 
             List<OrderView> orders = new List<OrderView>();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -202,7 +210,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return orders;
         }
@@ -212,9 +220,10 @@ namespace Salon.ADO.DAL
             string sqlExpression = $"EXEC GetOrderIds;";
 
             List<int> ids = new List<int>();
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -224,9 +233,19 @@ namespace Salon.ADO.DAL
                     ids.Add(id);
                 }
             }
-            _connection.Close();
+            sql.Close();
 
             return ids;
+        }
+
+        public IEnumerable<string> GetPhoneNumbers()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<string> GetEmails()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

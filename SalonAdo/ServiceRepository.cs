@@ -1,4 +1,5 @@
 ﻿using Salon.Abstractions.Interfaces;
+using Salon.ADO.DAL.Connection;
 using Salon.Entities.Models;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -7,9 +8,9 @@ namespace Salon.ADO.DAL
 {
     public class ServiceRepository : ISalonManager<Service>
     {
-        private readonly SqlConnection _connection;
+        private readonly ISqlConnectionFactory _connection;
 
-        public ServiceRepository(SqlConnection connection)
+        public ServiceRepository(ISqlConnectionFactory connection)
         {
             _connection = connection;
         }
@@ -25,12 +26,13 @@ namespace Salon.ADO.DAL
             string sqlExpression = $"INSERT INTO Services (NameOfService, Price) " +
                                     $"VALUES (N'{newService.NameOfService}', " +
                                     $"{newService.Price})";
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
 
             return newService;
         }
@@ -39,12 +41,13 @@ namespace Salon.ADO.DAL
         {
             string sqlExpression = $"DELETE FROM Services WHERE Id={id}";
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
         }
 
         public IEnumerable<Service> GetList()
@@ -53,9 +56,10 @@ namespace Salon.ADO.DAL
 
             List<Service> services = new List<Service>();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
 
             if (reader.HasRows)
@@ -73,7 +77,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return services;
         }
@@ -84,9 +88,10 @@ namespace Salon.ADO.DAL
 
             Service service = new Service();
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -101,7 +106,7 @@ namespace Salon.ADO.DAL
                 }
             }
 
-            _connection.Close();
+            sql.Close();
 
             return service;
         }
@@ -120,12 +125,13 @@ namespace Salon.ADO.DAL
                                             $"Price = '{serviceToUpdate.Price}'" +
                                             $"WHERE Id={id}";
 
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             command.ExecuteNonQuery();
 
-            _connection.Close();
+            sql.Close();
 
             return serviceToUpdate;
         }
@@ -135,9 +141,10 @@ namespace Salon.ADO.DAL
             string sqlExpression = $"EXEC GetServiceIds;";
 
             List<int> ids = new List<int>();
-            _connection.Open();
+            SqlConnection sql = _connection.CreateSqlConnection();
+            sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, _connection);
+            SqlCommand command = new SqlCommand(sqlExpression, sql);
             SqlDataReader reader = command.ExecuteReader();
             if (reader.HasRows)
             {
@@ -147,9 +154,19 @@ namespace Salon.ADO.DAL
                     ids.Add(id);
                 }
             }
-            _connection.Close();
+            sql.Close();
 
             return ids;
+        }
+
+        public IEnumerable<string> GetPhoneNumbers()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public IEnumerable<string> GetEmails()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }

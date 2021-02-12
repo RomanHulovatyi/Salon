@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Salon.Validation\Salon.Validation.csproj" />
     <ProjectReference Include="..\Salon.Web\Salon.Web.csproj" />
   </ItemGroup>
 

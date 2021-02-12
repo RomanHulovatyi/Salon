@@ -2,14 +2,9 @@
 using Moq;
 using NUnit.Framework;
 using Salon.BLL.Interfaces;
-using Salon.BLL.Services;
 using Salon.BLL.ViewModels;
 using Salon.Web.Controllers;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salon.nUnit.Web
 {
@@ -23,46 +18,52 @@ namespace Salon.nUnit.Web
         [Test]
         public void CreateShouldBeNotNull()
         {
+            //Arrange
             var mock = new Mock<ICustomerManager>();
             var controller = new CustomerController(mock.Object);
 
+            //Act
             var result = controller.Create() as ViewResult;
 
-            //Assert.AreEqual("Create", result);
+            //Assert
             Assert.IsNotNull(result);
         }
 
         [Test]
-        public void CreateShouldBeEqualToCreate()
+        public void CreateShouldRedirectToCreate()
         {
+            //Arrange
             var mock = new Mock<ICustomerManager>();
             var controller = new CustomerController(mock.Object);
 
-            var result = controller.Create() as ViewResult;
+            //Act
+            var result = controller.RedirectToAction("Create");
 
-            Assert.AreEqual("Create", result) ;
+            //Assert
+            Assert.That(result.ActionName, Is.EqualTo("Create"));
+            //Assert.AreEqual("Create", result.ViewData.Model) ;
+            //Assert.AreEqual("Index", result.RedirectToAction["action"]);
         }
 
         [Test]
-        public void IndexShouldReturnList()
+        public void IndexShouldReturnViewResult()
         {
             // Arrange
-            //var mockRepo = new Mock<ICustomerManager>();
-            //mockRepo.Setup(repo => repo.GetCustomers())
-            //    .Returns(GetTestSessions());
-            var bll = new CustomerManager();
-            var controller = new HomeController((Microsoft.Extensions.Logging.ILogger<HomeController>)bll);
+            var mockRepo = new Mock<ICustomerManager>();
+            mockRepo.Setup(repo => repo.GetCustomers())
+                .Returns(GetTestSessions());
+            var controller = new CustomerController(mockRepo.Object);
 
             // Act
-            var result = controller.Index();
+            var result = controller.Index(1);
 
             // Assert
             var viewResult = Is.TypeOf<ViewResult>();
-            Assert.AreEqual(viewResult, result);
+            Assert.That(result,viewResult);
+
             //var model = Is.AssignableFrom<IndexViewModel>(ViewResult);
             //Assert.AreEqual(2, model.Count());
         }
-
         private IndexViewModel GetTestSessions()
         {
             var sessions = new List<IndexViewModel>();
@@ -89,10 +90,34 @@ namespace Salon.nUnit.Web
 
             var res = new IndexViewModel
             {
-                Customer = customers
+                Customer = customers,
+                PageViewModel = new PageViewModel(2, 1, 2)
             };
             
             return res;
+        }
+
+
+
+        [Test]
+        public void CreateShouldVerifyInCustomerManager()
+        {
+            // arrange
+            var mock = new Mock<ICustomerManager>();
+            CustomerController controller = new CustomerController(mock.Object);
+            CustomerViewModel customer = new CustomerViewModel
+            {
+                FirstName = "Ihor",
+                LastName = "Shevchenko",
+                PhoneNumber = "380665544789",
+                Email = "sam@sam.com"
+            };
+
+            // act
+            var result = controller.Create(customer) as RedirectToActionResult;
+
+            // assert
+            mock.Verify(a => a.AddCustomer(customer));
         }
     }
 }

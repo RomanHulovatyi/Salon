@@ -1,10 +1,8 @@
 ﻿using Salon.Abstractions.Interfaces;
-using Salon.ADO.DAL;
 using Salon.BLL.Interfaces;
 using Salon.Entities.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using Salon.BLL.ViewModels;
 
@@ -12,35 +10,37 @@ namespace Salon.BLL.Services
 {
     public class CustomerManager : ICustomerManager
     {
+        private ISalonManager<Customer> _salonManager;
+
+        public CustomerManager(ISalonManager<Customer> salonManager)
+        {
+            _salonManager = salonManager;
+        }
+
         public CustomerViewModel AddCustomer(CustomerViewModel customer)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                Customer newCustomer = new Customer
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    PhoneNumber = customer.PhoneNumber,
+                    Email = customer.Email
+                };
 
-                    Customer newCustomer = new Customer
-                    {
-                        FirstName = customer.FirstName,
-                        LastName = customer.LastName,
-                        PhoneNumber = customer.PhoneNumber,
-                        Email = customer.Email
-                    };
+                Customer createdCustomer = _salonManager.Add(newCustomer);
 
-                    Customer createdCustomer = salon.Add(newCustomer);
+                CustomerViewModel customerViewModel = new CustomerViewModel
+                {
+                    Id = createdCustomer.Id,
+                    FirstName = createdCustomer.FirstName,
+                    LastName = createdCustomer.LastName,
+                    PhoneNumber = createdCustomer.PhoneNumber,
+                    Email = createdCustomer.Email
+                };
 
-                    CustomerViewModel customerViewModel = new CustomerViewModel
-                    {
-                        Id = createdCustomer.Id,
-                        FirstName = createdCustomer.FirstName,
-                        LastName = createdCustomer.LastName,
-                        PhoneNumber = createdCustomer.PhoneNumber,
-                        Email = createdCustomer.Email
-                    };
-
-                    return customerViewModel;
-                }
+                return customerViewModel;
             }
             catch
             {
@@ -52,22 +52,16 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<int> listOfIds = _salonManager.GetIds();
+
+                if (listOfIds.Contains(id))
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
-
-                    CustomerRepository customerRepository = new CustomerRepository(connection);
-                    IEnumerable<int> listOfIds = customerRepository.GetIds();
-
-                    if (listOfIds.Contains(id))
-                    {
-                        salon.Delete(id);
-                        return $"Customer with id {id} deleted";
-                    }
-                    else
-                    {
-                        throw new Exception($"Customer with id {id} doesen't found");
-                    }
+                    _salonManager.Delete(id);
+                    return $"Customer with id {id} deleted";
+                }
+                else
+                {
+                    throw new Exception($"Customer with id {id} doesen't found");
                 }
             }
             catch (Exception ex)
@@ -80,32 +74,26 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<int> listOfIds = _salonManager.GetIds();
+
+                if (listOfIds.Contains(id))
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
+                    Customer selectedCustomer = _salonManager.GetSingle(id);
 
-                    CustomerRepository customerRepository = new CustomerRepository(connection);
-                    IEnumerable<int> listOfIds = customerRepository.GetIds();
-
-                    if (listOfIds.Contains(id))
+                    CustomerViewModel customerViewModel = new CustomerViewModel
                     {
-                        Customer selectedCustomer = salon.GetSingle(id);
+                        Id = selectedCustomer.Id,
+                        FirstName = selectedCustomer.FirstName,
+                        LastName = selectedCustomer.LastName,
+                        PhoneNumber = selectedCustomer.PhoneNumber,
+                        Email = selectedCustomer.Email
+                    };
 
-                        CustomerViewModel customerViewModel = new CustomerViewModel
-                        {
-                            Id = selectedCustomer.Id,
-                            FirstName = selectedCustomer.FirstName,
-                            LastName = selectedCustomer.LastName,
-                            PhoneNumber = selectedCustomer.PhoneNumber,
-                            Email = selectedCustomer.Email
-                        };
-
-                        return customerViewModel;
-                    }
-                    else
-                    {
-                        throw new Exception($"Customer with id {id} doesen't found");
-                    }
+                    return customerViewModel;
+                }
+                else
+                {
+                    throw new Exception($"Customer with id {id} doesen't found");
                 }
             }
             catch (Exception ex)
@@ -118,40 +106,35 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<Customer> customers = _salonManager.GetList();
+
+                var count = customers.Count();
+
+                int pageSize = 8;
+
+                var items = customers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
+                foreach (Customer c in items)
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
-
-                    IEnumerable<Customer> customers = salon.GetList();
-
-                    var count = customers.Count();
-
-                    int pageSize = 8;
-
-                    var items = customers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-                    List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
-                    foreach (Customer c in items)
+                    customersVM.Add(new CustomerViewModel
                     {
-                        customersVM.Add(new CustomerViewModel
-                        {
-                            Id = c.Id,
-                            FirstName = c.FirstName,
-                            LastName = c.LastName,
-                            PhoneNumber = c.PhoneNumber,
-                            Email = c.Email
-                        });
-                    }
-
-                    PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-                    IndexViewModel viewModel = new IndexViewModel
-                    {
-                        PageViewModel = pageViewModel,
-                        Customer = customersVM
-                    };
-
-                    return viewModel;
+                        Id = c.Id,
+                        FirstName = c.FirstName,
+                        LastName = c.LastName,
+                        PhoneNumber = c.PhoneNumber,
+                        Email = c.Email
+                    });
                 }
+
+                PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+                IndexViewModel viewModel = new IndexViewModel
+                {
+                    PageViewModel = pageViewModel,
+                    Customer = customersVM
+                };
+
+                return viewModel;
             }
             catch (Exception ex)
             {
@@ -163,32 +146,27 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<Customer> customers = _salonManager.GetList();
+
+                List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
+                foreach (Customer c in customers)
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
-
-                    IEnumerable<Customer> customers = salon.GetList();
-
-                    List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
-                    foreach (Customer c in customers)
+                    customersVM.Add(new CustomerViewModel
                     {
-                        customersVM.Add(new CustomerViewModel
-                        {
-                            Id = c.Id,
-                            FirstName = c.FirstName,
-                            LastName = c.LastName,
-                            PhoneNumber = c.PhoneNumber,
-                            Email = c.Email
-                        });
-                    }
-
-                    IndexViewModel viewModel = new IndexViewModel
-                    {
-                        Customer = customersVM.OrderBy(x => x.FirstName)
-                    };
-
-                    return viewModel;
+                        Id = c.Id,
+                        FirstName = c.FirstName,
+                        LastName = c.LastName,
+                        PhoneNumber = c.PhoneNumber,
+                        Email = c.Email
+                    });
                 }
+
+                IndexViewModel viewModel = new IndexViewModel
+                {
+                    Customer = customersVM.OrderBy(x => x.FirstName)
+                };
+
+                return viewModel;
             }
             catch (Exception ex)
             {
@@ -200,55 +178,29 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                Customer customerSelected = _salonManager.GetSingle(id);
+
+
+                Customer customerToUpdate = new Customer
                 {
-                    ISalonManager<Customer> salon = new CustomerRepository(connection);
-                    Customer customerSelected = salon.GetSingle(id);
+                    FirstName = customer.FirstName,
+                    LastName = customer.LastName,
+                    PhoneNumber = customer.PhoneNumber,
+                    Email = customer.Email
+                };
 
-                    //CustomerRepository customerRepository = new CustomerRepository(connection);
-                    //IEnumerable<int> listOfIds = customerRepository.GetIds();
-                    //IEnumerable<string> listOfPhones = customerRepository.GetPhoneNumbers();
-                    //IEnumerable<string> listOfEmails = customerRepository.GetEmails();
-
-                    //if(customerSelected.PhoneNumber != customer.PhoneNumber)
-                    //{
-                    //    if (listOfPhones.Contains(customer.PhoneNumber))
-                    //    {
-                    //        throw new Exception("This phone number is already taken");
-                    //    }
-                    //}
+                Customer updatedCustomer = _salonManager.Update(id, customerToUpdate);
 
 
-                    //if (customerSelected.Email != customer.Email)
-                    //{
-                    //    if (listOfEmails.Contains(customer.Email))
-                    //    {
-                    //        throw new Exception("This email is already taken");
-                    //    }
-                    //}
+                CustomerViewModel customerViewModel = new CustomerViewModel
+                {
+                    FirstName = updatedCustomer.FirstName,
+                    LastName = updatedCustomer.LastName,
+                    PhoneNumber = updatedCustomer.PhoneNumber,
+                    Email = updatedCustomer.Email
+                };
 
-
-                    Customer customerToUpdate = new Customer
-                    {
-                        FirstName = customer.FirstName,
-                        LastName = customer.LastName,
-                        PhoneNumber = customer.PhoneNumber,
-                        Email = customer.Email
-                    };
-
-                    Customer updatedCustomer = salon.Update(id, customerToUpdate);
-
-
-                    CustomerViewModel customerViewModel = new CustomerViewModel
-                    {
-                        FirstName = updatedCustomer.FirstName,
-                        LastName = updatedCustomer.LastName,
-                        PhoneNumber = updatedCustomer.PhoneNumber,
-                        Email = updatedCustomer.Email
-                    };
-
-                    return customerViewModel;
-                }
+                return customerViewModel;
             }
             catch (Exception ex)
             {

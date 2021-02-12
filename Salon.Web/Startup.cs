@@ -3,8 +3,13 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Salon.Abstractions.Interfaces;
+using Salon.ADO.DAL;
+using Salon.ADO.DAL.Connection;
 using Salon.BLL.Interfaces;
 using Salon.BLL.Services;
+using Salon.Entities.Models;
+using Salon.Validation;
 
 namespace Salon.Web
 {
@@ -22,11 +27,17 @@ namespace Salon.Web
         {
             services.AddControllersWithViews();
 
+            services.AddTransient<ISalonManager<Customer>, CustomerRepository>();
+            services.AddTransient<ISalonManager<Service>, ServiceRepository>();
+            services.AddTransient<ISalonManager<State>, StateRepository>();
+            services.AddTransient<ISalonManager<Order>, OrderRepository>();
+
+
             services.AddTransient<ICustomerManager, CustomerManager>();
             services.AddTransient<IServiceManager, ServiceManager>();
             services.AddTransient<IOrderManager, OrderManager>();
             services.AddTransient<IStateManager, StateManager>();
-
+            services.AddTransient<ISqlConnectionFactory, SqlConnectionFactory>();
         }
 
 

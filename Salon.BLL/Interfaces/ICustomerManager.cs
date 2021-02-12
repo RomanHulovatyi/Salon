@@ -1,11 +1,4 @@
-﻿
-using Salon.BLL.ViewModels;
-using Salon.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Salon.BLL.ViewModels;
 
 namespace Salon.BLL.Interfaces
 {

@@ -1,52 +1,42 @@
 ﻿using Salon.Abstractions.Interfaces;
-using Salon.ADO.DAL;
 using Salon.BLL.Interfaces;
 using Salon.BLL.ViewModels;
 using Salon.Entities.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salon.BLL.Services
 {
     public class OrderManager : IOrderManager
     {
-        //public IEnumerable<CustomerViewModel> GetCustomers()
-        //{
-
-        //}
+        private ISalonManager<Order> _orderManager;
+        private ISalonManager<Customer> _customerManager;
+        private ISalonManager<Service> _serviceManager;
+        private ISalonManager<State> _stateManager;
+        public OrderManager(ISalonManager<Order> orderManager, 
+                            ISalonManager<Customer> customerManager, 
+                            ISalonManager<Service> servcieManager,
+                            ISalonManager<State> stateManager)
+        {
+            _orderManager = orderManager;
+            _customerManager = customerManager;
+            _serviceManager = servcieManager;
+            _stateManager = stateManager;
+        }
         public void AddOrder(GlobalViewModel order)
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                Order newOrder = new Order
                 {
-                    ISalonManager<Order> salon = new OrderRepository(connection);
+                    ServiceId = order.ServiceId,
+                    CustomerId = order.CustomerId,
+                    DateOfProcedure = order.Date,
+                    StatusId = 6
+                };
 
-                    Order newOrder = new Order
-                    {
-                        ServiceId = order.ServiceId,
-                        CustomerId = order.CustomerId,
-                        DateOfProcedure = order.Date,
-                        StatusId = 6
-                    };
-
-                    Order createdOrder = salon.Add(newOrder);
-
-                    //OrderViewModel orderViewModel = new OrderViewModel
-                    //{
-                    //    Id = createdOrder.Id,
-                    //    Service = createdOrder.ServiceId,
-                    //    LastName = createdOrder.LastName,
-                    //    PhoneNumber = createdOrder.PhoneNumber,
-                    //    Email = createdOrder.Email
-                    //};
-
-                    //return customerViewModel;
-                }
+                Order createdOrder = _orderManager.Add(newOrder);
             }
             catch (Exception ex)
             {
@@ -58,22 +48,16 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection(@"Data Source = (localdb)\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<int> listOfIds = _orderManager.GetIds();
+
+                if (listOfIds.Contains(id))
                 {
-                    ISalonManager<Order> salon = new OrderRepository(connection);
-
-                    OrderRepository orderRepository = new OrderRepository(connection);
-                    IEnumerable<int> listOfIds = orderRepository.GetIds();
-
-                    if (listOfIds.Contains(id))
-                    {
-                        salon.Delete(id);
-                        return $"Order with id {id} deleted";
-                    }
-                    else
-                    {
-                        throw new Exception($"Order with id {id} doesen't found");
-                    }
+                    _orderManager.Delete(id);
+                    return $"Order with id {id} deleted";
+                }
+                else
+                {
+                    throw new Exception($"Order with id {id} doesen't found");
                 }
             }
             catch (Exception ex)
@@ -86,56 +70,47 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<int> listOfIds = _orderManager.GetIds();
+
+                if (listOfIds.Contains(id))
                 {
-                    OrderRepository orderRepository = new OrderRepository(connection);
-                    IEnumerable<int> listOfIds = orderRepository.GetIds();
+                    Order selectedOrder = _orderManager.GetSingle(id);
 
-                    CustomerRepository customerRepository = new CustomerRepository(connection);
-                    ServiceRepository serviceRepository = new ServiceRepository(connection);
-                    StateRepository stateRepository = new StateRepository(connection);
+                    Customer customer = _customerManager.GetSingle(selectedOrder.CustomerId);
+                    Service service = _serviceManager.GetSingle(selectedOrder.ServiceId);
+                    State state = _stateManager.GetSingle(selectedOrder.StatusId);
 
-
-                    if (listOfIds.Contains(id))
+                    OrderViewModel orderViewModel = new OrderViewModel
                     {
-                        Order selectedOrder = orderRepository.GetSingle(id);
-
-                        Customer customer = customerRepository.GetSingle(selectedOrder.CustomerId);
-                        Service service = serviceRepository.GetSingle(selectedOrder.ServiceId);
-                        State state = stateRepository.GetSingle(selectedOrder.StatusId);
-
-                        OrderViewModel orderViewModel = new OrderViewModel
+                        Id = selectedOrder.Id,
+                        Customer = new CustomerViewModel 
                         {
-                            Id = selectedOrder.Id,
-                            Customer = new CustomerViewModel 
-                            {
-                                Id = customer.Id,
-                                FirstName = customer.FirstName,
-                                LastName = customer.LastName,
-                                PhoneNumber = customer.PhoneNumber,
-                                Email = customer.Email
-                            },
-                            Service = new ServiceViewModel 
-                            {
-                                Id = service.Id,
-                                NameOfService = service.NameOfService,
-                                Price = service.Price
-                            },
-                            Price = service.Price,
-                            Date = selectedOrder.DateOfProcedure,
-                            Status = new StateViewModel
-                            {
-                                Id = state.Id,
-                                OrderStatus = state.OrderStatus
-                            }
-                        };
+                            Id = customer.Id,
+                            FirstName = customer.FirstName,
+                            LastName = customer.LastName,
+                            PhoneNumber = customer.PhoneNumber,
+                            Email = customer.Email
+                        },
+                        Service = new ServiceViewModel 
+                        {
+                            Id = service.Id,
+                            NameOfService = service.NameOfService,
+                            Price = service.Price
+                        },
+                        Price = service.Price,
+                        Date = selectedOrder.DateOfProcedure,
+                        Status = new StateViewModel
+                        {
+                            Id = state.Id,
+                            OrderStatus = state.OrderStatus
+                        }
+                    };
 
-                        return orderViewModel;
-                    }
-                    else
-                    {
-                        throw new Exception($"Order with id {id} doesen't found");
-                    }
+                    return orderViewModel;
+                }
+                else
+                {
+                    throw new Exception($"Order with id {id} doesen't found");
                 }
             }
             catch (Exception ex)
@@ -148,66 +123,56 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                IEnumerable<Order> orders = _orderManager.GetList().OrderByDescending(x => x.DateOfProcedure);
+
+                var count = orders.Count();
+
+                int pageSize = 8;
+
+                var items = orders.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+
+                List<OrderViewModel> ordersVM = new List<OrderViewModel>();
+                foreach (Order c in items)
                 {
-                    OrderRepository salon = new OrderRepository(connection);
+                    Customer customer = _customerManager.GetSingle(c.CustomerId);
+                    Service service = _serviceManager.GetSingle(c.ServiceId);
+                    State state = _stateManager.GetSingle(c.StatusId);
 
-
-                    IEnumerable<Order> orders = salon.GetList().OrderByDescending(x => x.DateOfProcedure);
-
-                    var count = orders.Count();
-
-                    int pageSize = 8;
-
-                    var items = orders.Skip((page - 1) * pageSize).Take(pageSize).ToList();
-
-                    List<OrderViewModel> ordersVM = new List<OrderViewModel>();
-                    foreach (Order c in items)
+                    ordersVM.Add(new OrderViewModel
                     {
-
-                        CustomerRepository customerRepository = new CustomerRepository(connection);
-                        ServiceRepository serviceRepository = new ServiceRepository(connection);
-                        StateRepository stateRepository = new StateRepository(connection);
-                        Customer customer = customerRepository.GetSingle(c.CustomerId);
-                        Service service = serviceRepository.GetSingle(c.ServiceId);
-                        State state = stateRepository.GetSingle(c.StatusId);
-
-                        ordersVM.Add(new OrderViewModel
+                        Id = c.Id,
+                        Customer = new CustomerViewModel
                         {
-                            Id = c.Id,
-                            Customer = new CustomerViewModel
-                            {
-                                Id = customer.Id,
-                                FirstName = customer.FirstName,
-                                LastName = customer.LastName,
-                                PhoneNumber = customer.PhoneNumber,
-                                Email = customer.Email
-                            },
-                            Service = new ServiceViewModel
-                            {
-                                Id = service.Id,
-                                NameOfService = service.NameOfService,
-                                Price = service.Price
-                            },
-                            Price = service.Price,
-                            Date = c.DateOfProcedure,
-                            Status = new StateViewModel
-                            {
-                                Id = state.Id,
-                                OrderStatus = state.OrderStatus
-                            }
-                        });
-                    }
-
-                    PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-                    OrderIndexViewModel viewModel = new OrderIndexViewModel
-                    {
-                        PageViewModel = pageViewModel,
-                        Order = ordersVM.OrderByDescending(x => x.Date)
-                    };
-
-                    return viewModel;
+                            Id = customer.Id,
+                            FirstName = customer.FirstName,
+                            LastName = customer.LastName,
+                            PhoneNumber = customer.PhoneNumber,
+                            Email = customer.Email
+                        },
+                        Service = new ServiceViewModel
+                        {
+                            Id = service.Id,
+                            NameOfService = service.NameOfService,
+                            Price = service.Price
+                        },
+                        Price = service.Price,
+                        Date = c.DateOfProcedure,
+                        Status = new StateViewModel
+                        {
+                            Id = state.Id,
+                            OrderStatus = state.OrderStatus
+                        }
+                    });
                 }
+
+                PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
+                OrderIndexViewModel viewModel = new OrderIndexViewModel
+                {
+                    PageViewModel = pageViewModel,
+                    Order = ordersVM.OrderByDescending(x => x.Date)
+                };
+
+                return viewModel;
             }
             catch (Exception ex)
             {
@@ -219,32 +184,17 @@ namespace Salon.BLL.Services
         {
             try
             {
-                using (SqlConnection connection = new SqlConnection("Data Source = (localdb)\\MSSQLLocalDB; Initial Catalog = Salon; Integrated Security = True"))
+                Order customerSelected = _orderManager.GetSingle(id);
+
+                Order orderToUpdate = new Order
                 {
-                    ISalonManager<Order> salon = new OrderRepository(connection);
-                    Order customerSelected = salon.GetSingle(id);
+                    ServiceId = order.ServiceId,
+                    CustomerId = order.CustomerId,
+                    DateOfProcedure = order.Date,
+                    StatusId = order.StatusId,
+                };
 
-                    Order orderToUpdate = new Order
-                    {
-                        ServiceId = order.ServiceId,
-                        CustomerId = order.CustomerId,
-                        DateOfProcedure = order.Date,
-                        StatusId = order.StatusId,
-                    };
-
-                    Order updatedOrder = salon.Update(id, orderToUpdate);
-
-
-                    //OrderViewModel orderViewModel = new OrderViewModel
-                    //{
-                    //    FirstName = updatedCustomer.FirstName,
-                    //    LastName = updatedCustomer.LastName,
-                    //    PhoneNumber = updatedCustomer.PhoneNumber,
-                    //    Email = updatedCustomer.Email
-                    //};
-
-                    //return customerViewModel;
-                }
+                Order updatedOrder = _orderManager.Update(id, orderToUpdate);
             }
             catch (Exception ex)
             {

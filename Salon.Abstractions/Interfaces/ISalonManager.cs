@@ -10,5 +10,8 @@ namespace Salon.Abstractions.Interfaces
         IEnumerable<T> GetList();
         T Update(int id, T entity);
         T GetSingle(int id);
+        IEnumerable<string> GetPhoneNumbers();
+        IEnumerable<string> GetEmails();
+        List<int> GetIds();
     }
 }

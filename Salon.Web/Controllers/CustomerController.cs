@@ -1,13 +1,6 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Salon.BLL.Interfaces;
 using Salon.BLL.ViewModels;
-using Salon.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Salon.Web.Controllers
 {
@@ -57,8 +50,13 @@ namespace Salon.Web.Controllers
         [HttpPost]
         public IActionResult Create(CustomerViewModel customer)
         {
-            var createdCustomer = _customerManager.AddCustomer(customer);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var createdCustomer = _customerManager.AddCustomer(customer);
+                return RedirectToAction("Index");
+            }
+                
+            return Content("This phone number or email already taken");
         }
 
         [HttpGet]
@@ -73,6 +71,13 @@ namespace Salon.Web.Controllers
         {
             var deletedCustomer = _customerManager.DeleteCustomer(customer.Id);
             return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ViewResult Error(int? id)
+        {
+            var customer = _customerManager.GetCustomer((int)id);
+            return View(customer);
         }
     }
 }
