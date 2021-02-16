@@ -66,10 +66,12 @@ namespace Salon.Web.Controllers
             return View(customer);
         }
 
+        [ActionName("Delete")]
         [HttpPost]
-        public IActionResult Delete(CustomerViewModel customer)
+        public IActionResult DeleteCustomer(int? id)
         {
-            var deletedCustomer = _customerManager.DeleteCustomer(customer.Id);
+            string deletedCustomer = _customerManager.DeleteCustomer((int)id);
+            ViewBag.Message = deletedCustomer;
             return RedirectToAction("Index");
         }
 

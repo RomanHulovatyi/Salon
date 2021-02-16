@@ -26,7 +26,7 @@ namespace Salon.nUnit.Validation
             mock.Setup(x => x.GetEmails()).Returns(temp);
 
             //Act
-            var result = emailValidation.IsValid(email);
+            var result = emailValidation.IsUnique(email);
 
             //Assert
             Assert.IsTrue(result);

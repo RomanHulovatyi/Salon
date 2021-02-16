@@ -1,22 +1,35 @@
 ﻿using Moq;
 using NUnit.Framework;
+using Salon.Abstractions.Interfaces;
+using Salon.Entities.Models;
 using Salon.Validation;
+using System;
+using System.Collections.Generic;
 
 namespace Salon.nUnit.Validation
 {
     public class PhoneUniquenessTest
     {
         [Test]
-        public void IsValidShouldBeTrue()
+        [TestCase("elegate")]
+        [TestCase("word")]
+        public void IsValidShouldBeTrue(string email)
         {
+
             //Arrange
-            var check = new Mock<PhoneUniqueness>();
-            
+            List<String> temp = new List<string>();
+            temp.Add("testing");
+            temp.Add("testing1");
+
+            var mock = new Mock<ISalonManager<Customer>>();
+            var phoneValidation = new PhoneUniqueness(mock.Object);
+            mock.Setup(x => x.GetPhoneNumbers()).Returns(temp);
+
             //Act
-            var result = check.Setup(x => x.IsValid("0"));
+            var result = phoneValidation.IsUnique(email);
 
             //Assert
-            Assert.AreEqual(true, result);
+            Assert.IsTrue(result);
         }
     }
 }

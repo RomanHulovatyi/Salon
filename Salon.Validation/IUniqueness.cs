@@ -6,6 +6,6 @@ namespace Salon.Validation
     {
         public List<string> ColumnName { get; set; }
 
-        public bool IsValid(object o);
+        public bool IsUnique(object o);
     }
 }

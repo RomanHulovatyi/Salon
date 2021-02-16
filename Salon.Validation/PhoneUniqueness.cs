@@ -6,22 +6,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Salon.Validation
 {
-    public class PhoneUniqueness : ValidationAttribute
+    public class PhoneUniqueness : IUniqueness
     {
-        List<string> phones { get; set; }
+        public List<string> ColumnName { get; set; }
         private ISalonManager<Customer> _salonManager;
 
-        public PhoneUniqueness(CustomerRepository salonManager)
+        public PhoneUniqueness(ISalonManager<Customer> salonManager)
         {
             _salonManager = salonManager;
         }
 
-        public override bool IsValid(object value)
+        public bool IsUnique(object value)
         {
             string v = value.ToString();
-            phones = (List<string>)_salonManager.GetPhoneNumbers();
+            ColumnName = (List<string>)_salonManager.GetPhoneNumbers();
 
-            return !phones.Contains(v);
+            return !ColumnName.Contains(v);
         }
     }
 }

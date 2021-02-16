@@ -44,8 +44,14 @@
         </dd>
     </dl>
 
-    <form asp-action="Delete">
+    <form asp-action="Delete" onsubmit="myFunction()">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>
+
+<script>
+    function myFunction() {
+        alert('Nooo');
+    }
+</script>

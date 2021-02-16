@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Salon.Validation
 {
-    public class EmailUniqueness : ValidationAttribute, IUniqueness
+    public class EmailUniqueness : IUniqueness
     {
         public List<string> ColumnName { get; set; }
 
@@ -16,7 +16,7 @@ namespace Salon.Validation
             _salonManager = salonManager;
         }
 
-        public override bool IsValid(object value)
+        public bool IsUnique(object value)
         {
             string v = value.ToString();
 

@@ -11,10 +11,12 @@ namespace Salon.BLL.Services
     public class CustomerManager : ICustomerManager
     {
         private ISalonManager<Customer> _salonManager;
+        private ISalonManager<Order> _orderManager;
 
-        public CustomerManager(ISalonManager<Customer> salonManager)
+        public CustomerManager(ISalonManager<Customer> salonManager, ISalonManager<Order> orderManager)
         {
             _salonManager = salonManager;
+            _orderManager = orderManager;
         }
 
         public CustomerViewModel AddCustomer(CustomerViewModel customer)
@@ -53,6 +55,11 @@ namespace Salon.BLL.Services
             try
             {
                 IEnumerable<int> listOfIds = _salonManager.GetIds();
+                List<Order> listOfOrders = (List<Order>)_orderManager.GetList();
+                if (listOfOrders.Any(c => c.CustomerId == id))
+                {
+                    return $"Customer can't be deleted because there are orders with this customer";
+                }
 
                 if (listOfIds.Contains(id))
                 {
