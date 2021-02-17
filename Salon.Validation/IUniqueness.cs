@@ -4,7 +4,7 @@ namespace Salon.Validation
 {
     public interface IUniqueness
     {
-        public List<string> ColumnName { get; set; }
+        public List<string> CheckList { get; set; }
 
         public bool IsUnique(object o);
     }

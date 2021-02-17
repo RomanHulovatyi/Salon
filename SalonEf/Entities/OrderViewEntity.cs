@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Salon.Entities.Models
 {
-    public class OrderView
+    public class OrderViewEntity
     {
         public int Id { get; set; }
         public string Customer { get; set; }

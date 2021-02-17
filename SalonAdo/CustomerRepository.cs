@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Salon.ADO.DAL
 {
-    public class CustomerRepository : ISalonManager<Customer>
+    public class CustomerRepository : ISalonRepository<CustomerEntity>
     {
         private readonly ISqlConnectionFactory _connection;
 
@@ -15,9 +15,9 @@ namespace Salon.ADO.DAL
             _connection = connection;
         }
 
-        public Customer Add(Customer customer)
+        public CustomerEntity Add(CustomerEntity customer)
         {
-            Customer newCustomer = new Customer
+            CustomerEntity newCustomer = new CustomerEntity
             {
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
@@ -55,11 +55,11 @@ namespace Salon.ADO.DAL
             sql.Close();
         }
 
-        public IEnumerable<Customer> GetList()
+        public IEnumerable<CustomerEntity> GetList()
         {
             string sqlExpression = "SELECT * FROM Customers";
 
-            List<Customer> customers = new List<Customer>();
+            List<CustomerEntity> customers = new List<CustomerEntity>();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -71,7 +71,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    Customer customer = new Customer
+                    CustomerEntity customer = new CustomerEntity
                     {
                         Id = reader.GetInt32(0),
                         FirstName = reader.GetString(1),
@@ -89,11 +89,11 @@ namespace Salon.ADO.DAL
             return customers;
         }
 
-        public Customer GetSingle(int id)
+        public CustomerEntity GetSingle(int id)
         {
             string sqlExpression = $"SELECT * FROM Customers WHERE Id = {id}";
 
-            Customer customer = new Customer();
+            CustomerEntity customer = new CustomerEntity();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -104,7 +104,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    customer = new Customer
+                    customer = new CustomerEntity
                     {
                         Id = reader.GetInt32(0),
                         FirstName = reader.GetString(1),
@@ -120,9 +120,9 @@ namespace Salon.ADO.DAL
             return customer;
         }
 
-        public Customer Update(int id, Customer customer)
+        public CustomerEntity Update(int id, CustomerEntity customer)
         {
-            Customer customerToUpdate = new Customer
+            CustomerEntity customerToUpdate = new CustomerEntity
             {
                 Id = id,
                 FirstName = customer.FirstName,

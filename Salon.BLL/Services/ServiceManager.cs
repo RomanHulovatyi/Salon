@@ -10,24 +10,24 @@ namespace Salon.BLL.Services
 {
     public class ServiceManager : IServiceManager
     {
-        private ISalonManager<Service> _salonManager;
+        private ISalonRepository<ServiceEntity> _salonManager;
 
-        public ServiceManager(ISalonManager<Service> salonManager)
+        public ServiceManager(ISalonRepository<ServiceEntity> salonManager)
         {
             _salonManager = salonManager;
         }
 
-        public void AddService(ServiceViewModel service)
+        public void Add(ServiceModel service)
         {
             try
             {
-                Service newServie = new Service
+                ServiceEntity newServie = new ServiceEntity
                 {
                     NameOfService = service.NameOfService,
                     Price = service.Price
                 };
 
-                Service createdService = _salonManager.Add(newServie);
+                ServiceEntity createdService = _salonManager.Add(newServie);
             }
             catch(Exception ex)
             {
@@ -36,7 +36,7 @@ namespace Salon.BLL.Services
                 
         }
 
-        public string DeleteService(int id)
+        public string Delete(int id)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace Salon.BLL.Services
             }
         }
 
-        public ServiceViewModel GetService(int id)
+        public ServiceModel GetService(int id)
         {
             try
             {
@@ -66,9 +66,9 @@ namespace Salon.BLL.Services
 
                 if (listOfIds.Contains(id))
                 {
-                    Service selectedService = _salonManager.GetSingle(id);
+                    ServiceEntity selectedService = _salonManager.GetSingle(id);
 
-                    ServiceViewModel serviceViewModel = new ServiceViewModel
+                    ServiceModel serviceViewModel = new ServiceModel
                     {
                         Id = selectedService.Id,
                         NameOfService = selectedService.NameOfService,
@@ -88,11 +88,11 @@ namespace Salon.BLL.Services
             }
         }
 
-        public ServiceIndexViewModel GetServices(int page = 1)
+        public ServiceIndexModel Get(int page = 1)
         {
             try
             {
-                IEnumerable<Service> customers = _salonManager.GetList();
+                IEnumerable<ServiceEntity> customers = _salonManager.GetList();
 
                 var count = customers.Count();
 
@@ -100,10 +100,10 @@ namespace Salon.BLL.Services
 
                 var items = customers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-                List<ServiceViewModel> servicesVM = new List<ServiceViewModel>();
-                foreach (Service c in items)
+                List<ServiceModel> servicesVM = new List<ServiceModel>();
+                foreach (ServiceEntity c in items)
                 {
-                    servicesVM.Add(new ServiceViewModel
+                    servicesVM.Add(new ServiceModel
                     {
                         Id = c.Id,
                         NameOfService = c.NameOfService,
@@ -111,8 +111,8 @@ namespace Salon.BLL.Services
                     });
                 }
 
-                PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-                ServiceIndexViewModel viewModel = new ServiceIndexViewModel
+                PageModel pageViewModel = new PageModel(count, page, pageSize);
+                ServiceIndexModel viewModel = new ServiceIndexModel
                 {
                     PageViewModel = pageViewModel,
                     Service = servicesVM
@@ -126,16 +126,16 @@ namespace Salon.BLL.Services
             }
         }
 
-        public ServiceIndexViewModel GetServices()
+        public ServiceIndexModel Get()
         {
             try
             {
-                IEnumerable<Service> customers = _salonManager.GetList();
+                IEnumerable<ServiceEntity> customers = _salonManager.GetList();
 
-                List<ServiceViewModel> servicesVM = new List<ServiceViewModel>();
-                foreach (Service c in customers)
+                List<ServiceModel> servicesVM = new List<ServiceModel>();
+                foreach (ServiceEntity c in customers)
                 {
-                    servicesVM.Add(new ServiceViewModel
+                    servicesVM.Add(new ServiceModel
                     {
                         Id = c.Id,
                         NameOfService = c.NameOfService,
@@ -143,7 +143,7 @@ namespace Salon.BLL.Services
                     });
                 }
 
-                ServiceIndexViewModel viewModel = new ServiceIndexViewModel
+                ServiceIndexModel viewModel = new ServiceIndexModel
                 {
                     Service = servicesVM.OrderBy(x => x.NameOfService)
                 };
@@ -156,22 +156,22 @@ namespace Salon.BLL.Services
             }
         }
 
-        public ServiceViewModel UpdateService(int id, ServiceViewModel service)
+        public ServiceModel Update(int id, ServiceModel service)
         {
             try
             {
-                Service serviceSelected = _salonManager.GetSingle(id);
+                ServiceEntity serviceSelected = _salonManager.GetSingle(id);
 
-                Service serviceToUpdate = new Service
+                ServiceEntity serviceToUpdate = new ServiceEntity
                 {
                     NameOfService = service.NameOfService,
                     Price = service.Price
                };
 
-               Service updatedService = _salonManager.Update(id, serviceToUpdate);
+               ServiceEntity updatedService = _salonManager.Update(id, serviceToUpdate);
 
 
-               ServiceViewModel serviceViewModel = new ServiceViewModel
+               ServiceModel serviceViewModel = new ServiceModel
                {
                    NameOfService = updatedService.NameOfService,
                    Price = updatedService.Price

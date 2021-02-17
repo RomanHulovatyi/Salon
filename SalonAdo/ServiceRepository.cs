@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Salon.ADO.DAL
 {
-    public class ServiceRepository : ISalonManager<Service>
+    public class ServiceRepository : ISalonRepository<ServiceEntity>
     {
         private readonly ISqlConnectionFactory _connection;
 
@@ -15,9 +15,9 @@ namespace Salon.ADO.DAL
             _connection = connection;
         }
 
-        public Service Add(Service service)
+        public ServiceEntity Add(ServiceEntity service)
         {
-            Service newService = new Service
+            ServiceEntity newService = new ServiceEntity
             {
                 NameOfService = service.NameOfService,
                 Price = service.Price,
@@ -50,11 +50,11 @@ namespace Salon.ADO.DAL
             sql.Close();
         }
 
-        public IEnumerable<Service> GetList()
+        public IEnumerable<ServiceEntity> GetList()
         {
             string sqlExpression = "SELECT * FROM Services";
 
-            List<Service> services = new List<Service>();
+            List<ServiceEntity> services = new List<ServiceEntity>();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -66,7 +66,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    Service service = new Service
+                    ServiceEntity service = new ServiceEntity
                     {
                         Id = reader.GetInt32(0),
                         NameOfService = reader.GetString(1),
@@ -82,11 +82,11 @@ namespace Salon.ADO.DAL
             return services;
         }
 
-        public Service GetSingle(int id)
+        public ServiceEntity GetSingle(int id)
         {
             string sqlExpression = $"SELECT * FROM Services WHERE Id = {id}";
 
-            Service service = new Service();
+            ServiceEntity service = new ServiceEntity();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -97,7 +97,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    service = new Service
+                    service = new ServiceEntity
                     {
                         Id = reader.GetInt32(0),
                         NameOfService = reader.GetString(1),
@@ -111,9 +111,9 @@ namespace Salon.ADO.DAL
             return service;
         }
 
-        public Service Update(int id, Service service)
+        public ServiceEntity Update(int id, ServiceEntity service)
         {
-            Service serviceToUpdate = new Service
+            ServiceEntity serviceToUpdate = new ServiceEntity
             {
                 Id = id,
                 NameOfService = service.NameOfService,

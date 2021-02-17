@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Salon.ADO.DAL
 {
-    public class OrderRepository : ISalonManager<Order>
+    public class OrderRepository : ISalonRepository<OrderEntity>
     {
         private readonly ISqlConnectionFactory _connection;
 
@@ -15,9 +15,9 @@ namespace Salon.ADO.DAL
             _connection = connection;
         }
 
-        public Order Add(Order order)
+        public OrderEntity Add(OrderEntity order)
         {
-            Order newOrder = new Order
+            OrderEntity newOrder = new OrderEntity
             {
                 ServiceId = order.ServiceId,
                 CustomerId = order.CustomerId,
@@ -54,11 +54,11 @@ namespace Salon.ADO.DAL
             sql.Close();
         }
 
-        public IEnumerable<Order> GetList()
+        public IEnumerable<OrderEntity> GetList()
         {
             string sqlExpression = "SELECT * FROM Orders";
 
-            List<Order> orders = new List<Order>();
+            List<OrderEntity> orders = new List<OrderEntity>();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -70,7 +70,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    Order order = new Order
+                    OrderEntity order = new OrderEntity
                     {
                         Id = reader.GetInt32(0),
                         ServiceId = reader.GetInt32(1),
@@ -88,11 +88,11 @@ namespace Salon.ADO.DAL
             return orders;
         }
 
-        public Order GetSingle(int id)
+        public OrderEntity GetSingle(int id)
         {
             string sqlExpression = $"SELECT * FROM Orders WHERE Id = {id}";
 
-            Order order = new Order();
+            OrderEntity order = new OrderEntity();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -103,7 +103,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    order = new Order
+                    order = new OrderEntity
                     {
                         Id = reader.GetInt32(0),
                         ServiceId = reader.GetInt32(1),
@@ -119,9 +119,9 @@ namespace Salon.ADO.DAL
             return order;
         }
 
-        public Order Update(int id, Order order)
+        public OrderEntity Update(int id, OrderEntity order)
         {
-            Order orderToUpdate = new Order
+            OrderEntity orderToUpdate = new OrderEntity
             {
                 Id = id,
                 ServiceId = order.ServiceId,
@@ -148,11 +148,11 @@ namespace Salon.ADO.DAL
             return orderToUpdate;
         }
 
-        public OrderView GetSingleView(int id)
+        public OrderViewEntity GetSingleView(int id)
         {
             string sqlExpression = "SELECT * FROM OrderTable WHERE Id = {id}";
 
-            OrderView order = new OrderView();
+            OrderViewEntity order = new OrderViewEntity();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -163,7 +163,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    order = new OrderView
+                    order = new OrderViewEntity
                     {
                         Id = reader.GetInt32(0),
                         Customer = reader.GetString(1),
@@ -180,11 +180,11 @@ namespace Salon.ADO.DAL
             return order;
         }
 
-        public IEnumerable<OrderView> GetView()
+        public IEnumerable<OrderViewEntity> GetView()
         {
             string sqlExpression = "SELECT * FROM OrderTable ORDER BY [Date]";
 
-            List<OrderView> orders = new List<OrderView>();
+            List<OrderViewEntity> orders = new List<OrderViewEntity>();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -196,7 +196,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    OrderView order = new OrderView
+                    OrderViewEntity order = new OrderViewEntity
                     {
                         Id = reader.GetInt32(0),
                         Customer = reader.GetString(1),

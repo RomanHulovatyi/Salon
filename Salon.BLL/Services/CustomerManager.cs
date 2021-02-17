@@ -10,20 +10,20 @@ namespace Salon.BLL.Services
 {
     public class CustomerManager : ICustomerManager
     {
-        private ISalonManager<Customer> _salonManager;
-        private ISalonManager<Order> _orderManager;
+        private ISalonRepository<CustomerEntity> _salonManager;
+        private ISalonRepository<OrderEntity> _orderManager;
 
-        public CustomerManager(ISalonManager<Customer> salonManager, ISalonManager<Order> orderManager)
+        public CustomerManager(ISalonRepository<CustomerEntity> salonManager, ISalonRepository<OrderEntity> orderManager)
         {
             _salonManager = salonManager;
             _orderManager = orderManager;
         }
 
-        public CustomerViewModel AddCustomer(CustomerViewModel customer)
+        public CustomerModel Add(CustomerModel customer)
         {
             try
             {
-                Customer newCustomer = new Customer
+                CustomerEntity newCustomer = new CustomerEntity
                 {
                     FirstName = customer.FirstName,
                     LastName = customer.LastName,
@@ -31,9 +31,9 @@ namespace Salon.BLL.Services
                     Email = customer.Email
                 };
 
-                Customer createdCustomer = _salonManager.Add(newCustomer);
+                CustomerEntity createdCustomer = _salonManager.Add(newCustomer);
 
-                CustomerViewModel customerViewModel = new CustomerViewModel
+                CustomerModel customerViewModel = new CustomerModel
                 {
                     Id = createdCustomer.Id,
                     FirstName = createdCustomer.FirstName,
@@ -50,12 +50,12 @@ namespace Salon.BLL.Services
             }
         }
             
-        public string DeleteCustomer(int id)
+        public string Delete(int id)
         {
             try
             {
                 IEnumerable<int> listOfIds = _salonManager.GetIds();
-                List<Order> listOfOrders = (List<Order>)_orderManager.GetList();
+                List<OrderEntity> listOfOrders = (List<OrderEntity>)_orderManager.GetList();
                 if (listOfOrders.Any(c => c.CustomerId == id))
                 {
                     return $"Customer can't be deleted because there are orders with this customer";
@@ -77,7 +77,7 @@ namespace Salon.BLL.Services
             }
         }
 
-        public CustomerViewModel GetCustomer(int id)
+        public CustomerModel GetCustomer(int id)
         {
             try
             {
@@ -85,9 +85,9 @@ namespace Salon.BLL.Services
 
                 if (listOfIds.Contains(id))
                 {
-                    Customer selectedCustomer = _salonManager.GetSingle(id);
+                    CustomerEntity selectedCustomer = _salonManager.GetSingle(id);
 
-                    CustomerViewModel customerViewModel = new CustomerViewModel
+                    CustomerModel customerViewModel = new CustomerModel
                     {
                         Id = selectedCustomer.Id,
                         FirstName = selectedCustomer.FirstName,
@@ -109,11 +109,11 @@ namespace Salon.BLL.Services
             }
         }
 
-        public IndexViewModel GetCustomers(int page = 1)
+        public CustomerIndexModel Get(int page = 1)
         {
             try
             {
-                IEnumerable<Customer> customers = _salonManager.GetList();
+                IEnumerable<CustomerEntity> customers = _salonManager.GetList();
 
                 var count = customers.Count();
 
@@ -121,10 +121,10 @@ namespace Salon.BLL.Services
 
                 var items = customers.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-                List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
-                foreach (Customer c in items)
+                List<CustomerModel> customersVM = new List<CustomerModel>();
+                foreach (CustomerEntity c in items)
                 {
-                    customersVM.Add(new CustomerViewModel
+                    customersVM.Add(new CustomerModel
                     {
                         Id = c.Id,
                         FirstName = c.FirstName,
@@ -134,8 +134,8 @@ namespace Salon.BLL.Services
                     });
                 }
 
-                PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-                IndexViewModel viewModel = new IndexViewModel
+                PageModel pageViewModel = new PageModel(count, page, pageSize);
+                CustomerIndexModel viewModel = new CustomerIndexModel
                 {
                     PageViewModel = pageViewModel,
                     Customer = customersVM
@@ -149,16 +149,16 @@ namespace Salon.BLL.Services
             }
         }
 
-        public IndexViewModel GetCustomers()
+        public CustomerIndexModel Get()
         {
             try
             {
-                IEnumerable<Customer> customers = _salonManager.GetList();
+                IEnumerable<CustomerEntity> customers = _salonManager.GetList();
 
-                List<CustomerViewModel> customersVM = new List<CustomerViewModel>();
-                foreach (Customer c in customers)
+                List<CustomerModel> customersVM = new List<CustomerModel>();
+                foreach (CustomerEntity c in customers)
                 {
-                    customersVM.Add(new CustomerViewModel
+                    customersVM.Add(new CustomerModel
                     {
                         Id = c.Id,
                         FirstName = c.FirstName,
@@ -168,7 +168,7 @@ namespace Salon.BLL.Services
                     });
                 }
 
-                IndexViewModel viewModel = new IndexViewModel
+                CustomerIndexModel viewModel = new CustomerIndexModel
                 {
                     Customer = customersVM.OrderBy(x => x.FirstName)
                 };
@@ -181,14 +181,14 @@ namespace Salon.BLL.Services
             }
         }
 
-        public CustomerViewModel UpdateCustomer(int id, CustomerViewModel customer)
+        public CustomerModel Update(int id, CustomerModel customer)
         {
             try
             {
-                Customer customerSelected = _salonManager.GetSingle(id);
+                CustomerEntity customerSelected = _salonManager.GetSingle(id);
 
 
-                Customer customerToUpdate = new Customer
+                CustomerEntity customerToUpdate = new CustomerEntity
                 {
                     FirstName = customer.FirstName,
                     LastName = customer.LastName,
@@ -196,10 +196,10 @@ namespace Salon.BLL.Services
                     Email = customer.Email
                 };
 
-                Customer updatedCustomer = _salonManager.Update(id, customerToUpdate);
+                CustomerEntity updatedCustomer = _salonManager.Update(id, customerToUpdate);
 
 
-                CustomerViewModel customerViewModel = new CustomerViewModel
+                CustomerModel customerViewModel = new CustomerModel
                 {
                     FirstName = updatedCustomer.FirstName,
                     LastName = updatedCustomer.LastName,

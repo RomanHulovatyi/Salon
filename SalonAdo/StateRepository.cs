@@ -6,7 +6,7 @@ using System.Data.SqlClient;
 
 namespace Salon.ADO.DAL
 {
-    public class StateRepository : ISalonManager<State>
+    public class StateRepository : ISalonRepository<StateEntity>
     {
         private readonly ISqlConnectionFactory _connection;
 
@@ -15,9 +15,9 @@ namespace Salon.ADO.DAL
             _connection = connection;
         }
 
-        public State Add(State state)
+        public StateEntity Add(StateEntity state)
         {
-            State newState = new State
+            StateEntity newState = new StateEntity
             {
                 OrderStatus = state.OrderStatus
             };
@@ -48,11 +48,11 @@ namespace Salon.ADO.DAL
             sql.Close();
         }
 
-        public IEnumerable<State> GetList()
+        public IEnumerable<StateEntity> GetList()
         {
             string sqlExpression = "SELECT * FROM States";
 
-            List<State> states = new List<State>();
+            List<StateEntity> states = new List<StateEntity>();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -64,7 +64,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    State state = new State
+                    StateEntity state = new StateEntity
                     {
                         Id = reader.GetInt32(0),
                         OrderStatus = reader.GetString(1)
@@ -79,11 +79,11 @@ namespace Salon.ADO.DAL
             return states;
         }
 
-        public State GetSingle(int id)
+        public StateEntity GetSingle(int id)
         {
             string sqlExpression = $"SELECT * FROM States WHERE Id = {id}";
 
-            State state = new State();
+            StateEntity state = new StateEntity();
 
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
@@ -94,7 +94,7 @@ namespace Salon.ADO.DAL
             {
                 while (reader.Read())
                 {
-                    state = new State
+                    state = new StateEntity
                     {
                         Id = reader.GetInt32(0),
                         OrderStatus = reader.GetString(1)
@@ -107,9 +107,9 @@ namespace Salon.ADO.DAL
             return state;
         }
 
-        public State Update(int id, State state)
+        public StateEntity Update(int id, StateEntity state)
         {
-            State stateToUpdate = new State
+            StateEntity stateToUpdate = new StateEntity
             {
                 Id = id,
                 OrderStatus = state.OrderStatus

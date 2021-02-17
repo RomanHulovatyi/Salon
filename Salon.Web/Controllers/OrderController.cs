@@ -1,6 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using Salon.BLL.Interfaces;
 using Salon.BLL.ViewModels;
+using Salon.Web.Models;
+using System.Collections.Generic;
 
 namespace Salon.Web.Controllers
 {
@@ -22,27 +25,42 @@ namespace Salon.Web.Controllers
         [HttpGet]
         public IActionResult Index(int page = 1)
         {
-            var orders = _orderManager.GetOrders(page);
+            var orders = _orderManager.Get(page);
 
-            return View(orders);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<OrderModel, OrderViewModel>());
+            var mapper = new Mapper(config);
+            var ordersVM = mapper.Map<List<OrderViewModel>>(orders.Order);
+
+            var indexVM = new OrderIndexViewModel
+            {
+                Order = ordersVM,
+                PageViewModel = orders.PageViewModel
+            };
+
+            return View(indexVM);
         }
 
         [HttpGet]
         public IActionResult Details(int? id)
         {
             var order = _orderManager.GetOrder((int)id);
-            return View(order);
+
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<OrderModel, OrderViewModel>());
+            var mapper = new Mapper(config);
+            var orderVM = mapper.Map<OrderViewModel>(order);
+
+            return View(orderVM);
         }
 
         [HttpGet]
         public ViewResult Edit(int id)
         {
-            var customers = _customerManager.GetCustomers();
-            var services = _serviceManager.GetServices();
+            var customers = _customerManager.Get();
+            var services = _serviceManager.Get();
             var states = _stateManager.GetStates();
             var order = _orderManager.GetOrder((int)id);
 
-            GlobalViewModel vm = new GlobalViewModel
+            GlobalModel vm = new GlobalModel
             {
                 Customer = customers.Customer,
                 Service = services.Service,
@@ -54,32 +72,41 @@ namespace Salon.Web.Controllers
                 StatusId = order.Status.Id
             };
 
-            return View(vm);
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<GlobalModel, GlobalViewModel>());
+            var mapper = new Mapper(config);
+            var orderVM = mapper.Map<GlobalViewModel>(vm);
+
+            return View(orderVM);
         }
 
         [HttpPost]
-        public IActionResult Edit(GlobalViewModel order)
+        public IActionResult Edit(GlobalModel order)
         {
-            _orderManager.UpdateOrder(order.Id, order);
+            _orderManager.Update(order.Id, order);
             return RedirectToAction("Index");
         }
 
         public IActionResult Create()
         {
-            var customers = _customerManager.GetCustomers();
-            var services = _serviceManager.GetServices();
-            GlobalViewModel vm = new GlobalViewModel
+            var customers = _customerManager.Get();
+            var services = _serviceManager.Get();
+            GlobalModel vm = new GlobalModel
             {
                 Customer = customers.Customer,
                 Service = services.Service
             };
-            return View(vm);
+
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<GlobalModel, GlobalViewModel>());
+            var mapper = new Mapper(config);
+            var orderVM = mapper.Map<GlobalViewModel>(vm);
+
+            return View(orderVM);
         }
 
         [HttpPost]
-        public IActionResult Create(GlobalViewModel orderToCreate)
+        public IActionResult Create(GlobalModel orderToCreate)
         {
-            _orderManager.AddOrder(orderToCreate);
+            _orderManager.Add(orderToCreate);
             return RedirectToAction("Index");
         }
 
@@ -87,13 +114,18 @@ namespace Salon.Web.Controllers
         public ViewResult Delete(int? id)
         {
             var order = _orderManager.GetOrder((int)id);
-            return View(order);
+
+            var config = new MapperConfiguration(cfg => cfg.CreateMap<OrderModel, OrderViewModel>());
+            var mapper = new Mapper(config);
+            var orderVM = mapper.Map<OrderViewModel>(order);
+
+            return View(orderVM);
         }
 
         [HttpPost]
-        public IActionResult Delete(OrderViewModel order)
+        public IActionResult Delete(OrderModel order)
         {
-            var deletedOrder = _orderManager.DeleteOrder(order.Id);
+            var deletedOrder = _orderManager.Delete(order.Id);
             return RedirectToAction("Index");
         }
     }

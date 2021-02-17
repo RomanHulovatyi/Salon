@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Salon.Entities.Models
 {
-    public class Order : Table
+    public class OrderEntity : Table
     {
         public int Id { get; set; }
         public int ServiceId { get; set; }

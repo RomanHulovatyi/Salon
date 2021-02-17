@@ -5,25 +5,26 @@ using Salon.Entities.Models;
 using Salon.Validation;
 using System.ComponentModel.DataAnnotations;
 
-namespace Salon.BLL.ViewModels
+namespace Salon.Web.Models
 {
     public class CustomerViewModel
     {
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "Please enter a valid name")]
+        [Required(ErrorMessage = "Please fill in this field")]
         public string FirstName { get; set; }
 
-        [Required(ErrorMessage = "Please enter a valid surname")]
+        [Required(ErrorMessage = "Please fill in this field")]
         public string LastName { get; set; }
 
         [RegularExpression(@"^\s*(?:\+?(\d{1,3}))?[-. (]*(\d{3})[-. )]*(\d{3})[-. ]*(\d{4})(?: *x(\d+))?\s*$", ErrorMessage = "Invalid Phone Number")]       
         [PhoneEnique]
+        [Required(ErrorMessage = "Please fill in this field")]
         public string PhoneNumber { get; set; }
 
-        [EmailAddress]
+        [EmailAddress(ErrorMessage = "Please enter a valid email")]
         [EmailUnique]
-        [Required(ErrorMessage = "Please enter a valid email")]
+        [Required(ErrorMessage = "Please fill in this field")]
         public string Email { get; set; }
     }
 }

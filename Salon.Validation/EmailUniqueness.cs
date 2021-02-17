@@ -7,11 +7,11 @@ namespace Salon.Validation
 {
     public class EmailUniqueness : IUniqueness
     {
-        public List<string> ColumnName { get; set; }
+        public List<string> CheckList { get; set; }
 
-        private ISalonManager<Customer> _salonManager;
+        private ISalonRepository<CustomerEntity> _salonManager;
 
-        public EmailUniqueness(ISalonManager<Customer> salonManager)
+        public EmailUniqueness(ISalonRepository<CustomerEntity> salonManager)
         {
             _salonManager = salonManager;
         }
@@ -20,9 +20,9 @@ namespace Salon.Validation
         {
             string v = value.ToString();
 
-            ColumnName = (List<string>)_salonManager.GetEmails();
+            CheckList = (List<string>)_salonManager.GetEmails();
 
-            return !ColumnName.Contains(v);
+            return !CheckList.Contains(v);
         }
     }
 }

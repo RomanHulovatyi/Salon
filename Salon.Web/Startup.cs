@@ -27,10 +27,10 @@ namespace Salon.Web
         {
             services.AddControllersWithViews();
 
-            services.AddTransient<ISalonManager<Customer>, CustomerRepository>();
-            services.AddTransient<ISalonManager<Service>, ServiceRepository>();
-            services.AddTransient<ISalonManager<State>, StateRepository>();
-            services.AddTransient<ISalonManager<Order>, OrderRepository>();
+            services.AddTransient<ISalonRepository<CustomerEntity>, CustomerRepository>();
+            services.AddTransient<ISalonRepository<ServiceEntity>, ServiceRepository>();
+            services.AddTransient<ISalonRepository<StateEntity>, StateRepository>();
+            services.AddTransient<ISalonRepository<OrderEntity>, OrderRepository>();
 
 
             services.AddTransient<ICustomerManager, CustomerManager>();

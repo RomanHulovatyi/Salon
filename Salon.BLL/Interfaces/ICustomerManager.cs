@@ -4,11 +4,11 @@ namespace Salon.BLL.Interfaces
 {
     public interface ICustomerManager
     {
-        public CustomerViewModel AddCustomer(CustomerViewModel customer);
-        public IndexViewModel GetCustomers(int page);
-        public IndexViewModel GetCustomers();
-        public CustomerViewModel GetCustomer(int id);
-        public CustomerViewModel UpdateCustomer(int id, CustomerViewModel customer);
-        public string DeleteCustomer(int id);
+        public CustomerModel Add(CustomerModel customer);
+        public CustomerIndexModel Get(int page);
+        public CustomerIndexModel Get();
+        public CustomerModel GetCustomer(int id);
+        public CustomerModel Update(int id, CustomerModel customer);
+        public string Delete(int id);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Salon.BLL.ViewModels
+namespace Salon.Web.Models
 {
     public class PageViewModel
     {

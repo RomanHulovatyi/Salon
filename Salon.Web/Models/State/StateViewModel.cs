@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Salon.BLL.ViewModels
+namespace Salon.Web.Models
 {
     public class StateViewModel
     {

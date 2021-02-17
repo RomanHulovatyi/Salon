@@ -26,23 +26,24 @@ namespace Salon.nUnit.BLL
         public void GetCustomersShouldReturnList()
         {
             //Arrange
-            List<CustomerViewModel> list = new List<CustomerViewModel>();
-            list.Add(new CustomerViewModel { Id = 1, Email = "exs@mail.com", FirstName = "Roma", LastName = "Boma", PhoneNumber = "0634518465" });
-            IndexViewModel ivm = new IndexViewModel
+            List<CustomerModel> list = new List<CustomerModel>();
+            list.Add(new CustomerModel { Id = 1, Email = "exs@mail.com", FirstName = "Roma", LastName = "Boma", PhoneNumber = "0634518465" });
+            CustomerIndexModel ivm = new CustomerIndexModel
             {
                 Customer = list
             };
             string jsonString = JsonSerializer.Serialize(ivm);
 
-            List<Customer> temp = new List<Customer>();
-            temp.Add(new Customer {Id = 1, Email = "exs@mail.com" , FirstName = "Roma", LastName = "Boma", PhoneNumber = "0634518465"});
+            List<CustomerEntity> temp = new List<CustomerEntity>();
+            temp.Add(new CustomerEntity {Id = 1, Email = "exs@mail.com" , FirstName = "Roma", LastName = "Boma", PhoneNumber = "0634518465"});
 
-            var mock = new Mock<ISalonManager<Customer>>();
-            var getCustomers = new CustomerManager(mock.Object);
-            mock.Setup(x => x.GetList()).Returns(temp);
+            var mockCustomer = new Mock<ISalonRepository<CustomerEntity>>();
+            var mockOrder = new Mock<ISalonRepository<OrderEntity>>();
+            var getCustomers = new CustomerManager(mockCustomer.Object, mockOrder.Object);
+            mockCustomer.Setup(x => x.GetList()).Returns(temp);
 
             //Act
-            var result = getCustomers.GetCustomers();
+            var result = getCustomers.Get();
             string jsonString2 = JsonSerializer.Serialize(result);
 
             //Assert
@@ -53,26 +54,28 @@ namespace Salon.nUnit.BLL
         public void GetCustomersShouldCallGetListOnce()
         {
             //Arrange
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
+            var mock2 = new Mock<ISalonRepository<OrderEntity>>();
+            var customerManager = new CustomerManager(mock.Object, mock2.Object);
 
             //Act
-            customerManager.GetCustomers();
+            customerManager.Get();
 
             //Assert
             mock.Verify(x => x.GetList(), Times.Once);
         }
 
         [Test]
-        public void GetStatesShouldReturnTypeOf()
+        public void GetCustomersShouldReturnTypeOf()
         {
             //Arrange
-            string expected = "IndexViewModel";
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
+            string expected = "CustomerIndexModel";
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
+            var mock2 = new Mock<ISalonRepository<OrderEntity>>();
+            var customerManager = new CustomerManager(mock.Object, mock2.Object);
 
             //Act
-            var result = customerManager.GetCustomers();
+            var result = customerManager.Get();
 
             //Assert
             Assert.IsNotNull(result);
@@ -85,47 +88,51 @@ namespace Salon.nUnit.BLL
         public void AddCustomerShouldBeNotNull()
         {
             //arrange
-            string expected = "CustomerViewModel";
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
-            mock.Setup(x => x.Add(new Customer())).Returns(new Customer());
-
-            CustomerViewModel customer = new CustomerViewModel
+            CustomerModel customer = new CustomerModel
             {
                 FirstName = "Ihor",
                 LastName = "Shevchenko",
                 PhoneNumber = "380665544789",
                 Email = "sam@sam.com"
             };
+            var customerManager = new Mock<ICustomerManager>();
 
             //act
-            var result = customerManager.AddCustomer(customer);
+            var result = customerManager.Setup(x => x.Add(customer));
 
             //assert
-            Assert.IsNull(result);
-            //Assert.AreEqual(expected, result.GetType().Name);
+            Assert.IsNotNull(result);
         }
 
         [Test]
         public void AddCustomerShouldCallAddOnce()
         {
             //Arrange
-            CustomerViewModel cvm = new CustomerViewModel
+            CustomerModel cvm = new CustomerModel
             {
                 FirstName = "Aba",
                 LastName = "Beba",
                 PhoneNumber = "0505050505",
                 Email = "asd@sdf.com"
             };
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
-            mock.Setup(x => x.Add(new Customer())).Returns(new Customer());
+
+            CustomerEntity v = new CustomerEntity
+            {
+                FirstName = "Aba",
+                LastName = "Beba",
+                PhoneNumber = "0505050505",
+                Email = "asd@sdf.com"
+            };
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
+            var mock2 = new Mock<ISalonRepository<OrderEntity>>();
+            ICustomerManager customerManager = new CustomerManager(mock.Object, mock2.Object);
+            mock.Setup(x => x.Add(It.IsAny<CustomerEntity>())).Returns(v);
 
             //Act
-            customerManager.AddCustomer(cvm);
+            customerManager.Add(cvm);
 
             //Assert
-            mock.Verify(x => x.Add(new Customer()), Times.Once);
+            mock.Verify(x => x.Add(It.IsAny<CustomerEntity>()), Times.Once);
         }
 
 
@@ -133,17 +140,7 @@ namespace Salon.nUnit.BLL
         public void AddCustomerShouldReturn()
         {
             //arrange
-            CustomerViewModel shouldBe = new CustomerViewModel
-            {
-                Id = 0,
-                FirstName = "Ihor",
-                LastName = "Shevchenko",
-                PhoneNumber = "380665544789",
-                Email = "sam@sam.com"
-            };
-            string jsonString = JsonSerializer.Serialize(shouldBe);
-
-            Customer customer1 = new Customer
+            CustomerModel shouldBe = new CustomerModel
             {
                 Id = 0,
                 FirstName = "Ihor",
@@ -152,7 +149,7 @@ namespace Salon.nUnit.BLL
                 Email = "sam@sam.com"
             };
 
-            CustomerViewModel customer = new CustomerViewModel
+            CustomerEntity customer = new CustomerEntity
             {
                 FirstName = "Ihor",
                 LastName = "Shevchenko",
@@ -160,29 +157,26 @@ namespace Salon.nUnit.BLL
                 Email = "sam@sam.com"
             };
 
-            var mockSql = new Mock<ISqlConnectionFactory>();
-            //ISqlConnectionFactory factory = mockSql.Object;
-            mockSql.Setup(x => x.CreateSqlConnection());
+            CustomerModel customerModel = new CustomerModel
+            {
+                Id = 0,
+                FirstName = "Ihor",
+                LastName = "Shevchenko",
+                PhoneNumber = "380665544789",
+                Email = "sam@sam.com"
+            };
 
-            //var mock = new Mock<CustomerRepository>(MockBehavior.Strict, factory);
-            var mock = new Mock<CustomerRepository>(MockBehavior.Strict, mockSql.Object);
-            var customerManager = new CustomerManager(mock.Object);
 
-            //var mock2 = new CustomerManager(salon);
-            //var customerManager = new CustomerManager(salon);
-            //var r = mock2.Object.AddCustomer(customer);
-            //var result = mock2.Setup(x => x.AddCustomer(customer));
-
-            var result = customerManager.AddCustomer(customer);
-            string jsonString2 = JsonSerializer.Serialize(result);
-            //mock.Setup(x => x.Add(customer));
-
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
+            var mock2 = new Mock<ISalonRepository<OrderEntity>>();
+            ICustomerManager customerManager = new CustomerManager(mock.Object, mock2.Object);
+            mock.Setup(x => x.Add(It.IsAny<CustomerEntity>())).Returns(customer);
 
             //act
-            //var result = manager.AddCustomer(customer);
+            var result = customerManager.Add(customerModel);
 
             //assert
-            Assert.AreEqual(jsonString, jsonString2);
+            Assert.AreEqual(shouldBe.GetType().Name, result.GetType().Name);
         }
         #endregion
 
@@ -190,50 +184,59 @@ namespace Salon.nUnit.BLL
         [Test]
         public void GetCustomerShouldBeNotNull()
         {
-            //Customer temp = new Customer
-            //{
-            //    Id = 1,
-            //    FirstName = "Bob",
-            //    LastName = "Smith",
-            //    PhoneNumber = "0636363636",
-            //    Email = "email.email.com"
-            //};
-
-            var mock = new Mock<ISalonManager<Customer>>();
-            CustomerManager getCustomers = new CustomerManager(mock.Object);
-            mock.Setup(x => x.GetSingle(1));
-
-            //Act
-            var result = getCustomers.GetCustomer(1);
-
-            //Assert
-            Assert.IsNull(result);
-        }
-
-        [Test]
-        public void GetCustomerShouldCallGetSingleOnce()
-        {
             //Arrange
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
+            var customerManager = new Mock<ICustomerManager>();
 
             //Act
-            customerManager.GetCustomer(1);
+            var result = customerManager.Setup(x => x.GetCustomer(1));
 
             //Assert
-            mock.Verify(x => x.GetList(), Times.Once);
+            Assert.IsNotNull(result);
         }
+
+        //[Test]
+        //public void GetCustomerShouldCallGetSingleOnce()
+        //{
+        //    //Arrange
+        //    CustomerEntity customerModel = new CustomerEntity
+        //    {
+        //        Id = 0,
+        //        FirstName = "Ihor",
+        //        LastName = "Shevchenko",
+        //        PhoneNumber = "380665544789",
+        //        Email = "sam@sam.com"
+        //    };
+        //    CustomerEntity v = new CustomerEntity
+        //    {
+        //        FirstName = "Aba",
+        //        LastName = "Beba",
+        //        PhoneNumber = "0505050505",
+        //        Email = "asd@sdf.com"
+        //    };
+        //    var mock = new Mock<ISalonRepository<CustomerEntity>>();
+        //    var mock2 = new Mock<ISalonRepository<OrderEntity>>();
+        //    ICustomerManager customerManager = new CustomerManager(mock.Object, mock2.Object);
+        //    //mock.Setup(x => x.Add(It.IsAny<CustomerEntity>())).Returns(v);
+        //    mock.Setup(x => x.GetSingle(It.IsAny<int>())).Returns(v);
+
+        //    //Act
+        //    customerManager.GetCustomer(1);
+            
+        //    //Assert
+        //    mock2.Verify(x => x.GetSingle(It.IsAny<int>()), Times.Once);
+        //}
 
         [Test]
         public void GetCustomerShouldReturnTypeOf()
         {
             //Arrange
-            string expected = "CustomerViewModel";
-            var mock = new Mock<ISalonManager<Customer>>();
-            var customerManager = new CustomerManager(mock.Object);
+            string expected = "NonVoidSetupPhrase`2";
+            //var mock = new Mock<ISalonManager<Customer>>();
+            //var mock2 = new Mock<ISalonManager<Order>>();
+            var customerManager = new Mock<ICustomerManager>();
 
             //Act
-            var result = customerManager.GetCustomer(1);
+            var result = customerManager.Setup(x => x.GetCustomer(1));
 
             //Assert
             Assert.IsNotNull(result);

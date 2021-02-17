@@ -21,7 +21,7 @@ namespace Salon.nUnit.Validation
             temp.Add("testing");
             temp.Add("testing1");
 
-            var mock = new Mock<ISalonManager<Customer>>();
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
             var emailValidation = new EmailUniqueness(mock.Object);
             mock.Setup(x => x.GetEmails()).Returns(temp);
 

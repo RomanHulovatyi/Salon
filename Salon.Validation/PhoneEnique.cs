@@ -16,7 +16,7 @@ namespace Salon.Validation
         public override bool IsValid(object value)
         {
             ISqlConnectionFactory sql = new SqlConnectionFactory();
-            ISalonManager<Customer> manager = new CustomerRepository(sql);
+            ISalonRepository<CustomerEntity> manager = new CustomerRepository(sql);
             IUniqueness uniqueness = new PhoneUniqueness(manager);
             return uniqueness.IsUnique(value);
         }

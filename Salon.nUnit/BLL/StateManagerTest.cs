@@ -26,7 +26,7 @@ namespace Salon.nUnit.BLL
         {
             //Arrange
             string expected = "List`1";
-            var mock = new Mock<ISalonManager<State>>();
+            var mock = new Mock<ISalonRepository<StateEntity>>();
             IStateManager stateManager = new StateManager(mock.Object);
 
             //Act
@@ -41,7 +41,7 @@ namespace Salon.nUnit.BLL
         public void GetStatesShouldCallGetListOnce()
         {
             //Arrange
-            var mock = new Mock<ISalonManager<State>>();
+            var mock = new Mock<ISalonRepository<StateEntity>>();
             IStateManager stateManager = new StateManager(mock.Object);
 
             //Act
@@ -56,19 +56,19 @@ namespace Salon.nUnit.BLL
         public void GetCustomersShouldReturnList()
         {
             //Arrange
-            List<StateViewModel> list = new List<StateViewModel>();
-            list.Add(new StateViewModel { Id = 1, OrderStatus = "Completed" });
-            list.Add(new StateViewModel { Id = 2, OrderStatus = "Not completed" });
-            list.Add(new StateViewModel { Id = 3, OrderStatus = "Canceled" });
+            List<StateModel> list = new List<StateModel>();
+            list.Add(new StateModel { Id = 1, OrderStatus = "Completed" });
+            list.Add(new StateModel { Id = 2, OrderStatus = "Not completed" });
+            list.Add(new StateModel { Id = 3, OrderStatus = "Canceled" });
 
             string jsonString = JsonSerializer.Serialize(list);
 
-            List<State> temp = new List<State>();
-            temp.Add(new State { Id = 1, OrderStatus = "Completed" });
-            temp.Add(new State { Id = 2, OrderStatus = "Not completed" });
-            temp.Add(new State { Id = 3, OrderStatus = "Canceled" });
+            List<StateEntity> temp = new List<StateEntity>();
+            temp.Add(new StateEntity { Id = 1, OrderStatus = "Completed" });
+            temp.Add(new StateEntity { Id = 2, OrderStatus = "Not completed" });
+            temp.Add(new StateEntity { Id = 3, OrderStatus = "Canceled" });
 
-            var mock = new Mock<ISalonManager<State>>();
+            var mock = new Mock<ISalonRepository<StateEntity>>();
             var getCustomers = new StateManager(mock.Object);
             mock.Setup(x => x.GetList()).Returns(temp);
 

@@ -8,10 +8,10 @@ namespace Salon.Validation
 {
     public class PhoneUniqueness : IUniqueness
     {
-        public List<string> ColumnName { get; set; }
-        private ISalonManager<Customer> _salonManager;
+        public List<string> CheckList { get; set; }
+        private ISalonRepository<CustomerEntity> _salonManager;
 
-        public PhoneUniqueness(ISalonManager<Customer> salonManager)
+        public PhoneUniqueness(ISalonRepository<CustomerEntity> salonManager)
         {
             _salonManager = salonManager;
         }
@@ -19,9 +19,9 @@ namespace Salon.Validation
         public bool IsUnique(object value)
         {
             string v = value.ToString();
-            ColumnName = (List<string>)_salonManager.GetPhoneNumbers();
+            CheckList = (List<string>)_salonManager.GetPhoneNumbers();
 
-            return !ColumnName.Contains(v);
+            return !CheckList.Contains(v);
         }
     }
 }

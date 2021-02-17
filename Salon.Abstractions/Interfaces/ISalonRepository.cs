@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Salon.Abstractions.Interfaces
 {
-    public interface ISalonManager<T> where T : Table
+    public interface ISalonRepository<T> where T : Table
     {
         T Add(T entity);
         void Delete(int id);

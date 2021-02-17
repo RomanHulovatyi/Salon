@@ -10,25 +10,25 @@ namespace Salon.BLL.Services
 {
     public class OrderManager : IOrderManager
     {
-        private ISalonManager<Order> _orderManager;
-        private ISalonManager<Customer> _customerManager;
-        private ISalonManager<Service> _serviceManager;
-        private ISalonManager<State> _stateManager;
-        public OrderManager(ISalonManager<Order> orderManager, 
-                            ISalonManager<Customer> customerManager, 
-                            ISalonManager<Service> servcieManager,
-                            ISalonManager<State> stateManager)
+        private ISalonRepository<OrderEntity> _orderManager;
+        private ISalonRepository<CustomerEntity> _customerManager;
+        private ISalonRepository<ServiceEntity> _serviceManager;
+        private ISalonRepository<StateEntity> _stateManager;
+        public OrderManager(ISalonRepository<OrderEntity> orderManager, 
+                            ISalonRepository<CustomerEntity> customerManager, 
+                            ISalonRepository<ServiceEntity> servcieManager,
+                            ISalonRepository<StateEntity> stateManager)
         {
             _orderManager = orderManager;
             _customerManager = customerManager;
             _serviceManager = servcieManager;
             _stateManager = stateManager;
         }
-        public void AddOrder(GlobalViewModel order)
+        public void Add(GlobalModel order)
         {
             try
             {
-                Order newOrder = new Order
+                OrderEntity newOrder = new OrderEntity
                 {
                     ServiceId = order.ServiceId,
                     CustomerId = order.CustomerId,
@@ -36,7 +36,7 @@ namespace Salon.BLL.Services
                     StatusId = 6
                 };
 
-                Order createdOrder = _orderManager.Add(newOrder);
+                OrderEntity createdOrder = _orderManager.Add(newOrder);
             }
             catch (Exception ex)
             {
@@ -44,7 +44,7 @@ namespace Salon.BLL.Services
             }
         }
 
-        public string DeleteOrder(int id)
+        public string Delete(int id)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace Salon.BLL.Services
             }
         }
 
-        public OrderViewModel GetOrder(int id)
+        public OrderModel GetOrder(int id)
         {
             try
             {
@@ -74,16 +74,16 @@ namespace Salon.BLL.Services
 
                 if (listOfIds.Contains(id))
                 {
-                    Order selectedOrder = _orderManager.GetSingle(id);
+                    OrderEntity selectedOrder = _orderManager.GetSingle(id);
 
-                    Customer customer = _customerManager.GetSingle(selectedOrder.CustomerId);
-                    Service service = _serviceManager.GetSingle(selectedOrder.ServiceId);
-                    State state = _stateManager.GetSingle(selectedOrder.StatusId);
+                    CustomerEntity customer = _customerManager.GetSingle(selectedOrder.CustomerId);
+                    ServiceEntity service = _serviceManager.GetSingle(selectedOrder.ServiceId);
+                    StateEntity state = _stateManager.GetSingle(selectedOrder.StatusId);
 
-                    OrderViewModel orderViewModel = new OrderViewModel
+                    OrderModel orderViewModel = new OrderModel
                     {
                         Id = selectedOrder.Id,
-                        Customer = new CustomerViewModel 
+                        Customer = new CustomerModel 
                         {
                             Id = customer.Id,
                             FirstName = customer.FirstName,
@@ -91,7 +91,7 @@ namespace Salon.BLL.Services
                             PhoneNumber = customer.PhoneNumber,
                             Email = customer.Email
                         },
-                        Service = new ServiceViewModel 
+                        Service = new ServiceModel 
                         {
                             Id = service.Id,
                             NameOfService = service.NameOfService,
@@ -99,7 +99,7 @@ namespace Salon.BLL.Services
                         },
                         Price = service.Price,
                         Date = selectedOrder.DateOfProcedure,
-                        Status = new StateViewModel
+                        Status = new StateModel
                         {
                             Id = state.Id,
                             OrderStatus = state.OrderStatus
@@ -119,11 +119,11 @@ namespace Salon.BLL.Services
             }
         }
 
-        public OrderIndexViewModel GetOrders(int page)
+        public OrderIndexModel Get(int page)
         {
             try
             {
-                IEnumerable<Order> orders = _orderManager.GetList().OrderByDescending(x => x.DateOfProcedure);
+                IEnumerable<OrderEntity> orders = _orderManager.GetList().OrderByDescending(x => x.DateOfProcedure);
 
                 var count = orders.Count();
 
@@ -131,17 +131,17 @@ namespace Salon.BLL.Services
 
                 var items = orders.Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
-                List<OrderViewModel> ordersVM = new List<OrderViewModel>();
-                foreach (Order c in items)
+                List<OrderModel> ordersVM = new List<OrderModel>();
+                foreach (OrderEntity c in items)
                 {
-                    Customer customer = _customerManager.GetSingle(c.CustomerId);
-                    Service service = _serviceManager.GetSingle(c.ServiceId);
-                    State state = _stateManager.GetSingle(c.StatusId);
+                    CustomerEntity customer = _customerManager.GetSingle(c.CustomerId);
+                    ServiceEntity service = _serviceManager.GetSingle(c.ServiceId);
+                    StateEntity state = _stateManager.GetSingle(c.StatusId);
 
-                    ordersVM.Add(new OrderViewModel
+                    ordersVM.Add(new OrderModel
                     {
                         Id = c.Id,
-                        Customer = new CustomerViewModel
+                        Customer = new CustomerModel
                         {
                             Id = customer.Id,
                             FirstName = customer.FirstName,
@@ -149,7 +149,7 @@ namespace Salon.BLL.Services
                             PhoneNumber = customer.PhoneNumber,
                             Email = customer.Email
                         },
-                        Service = new ServiceViewModel
+                        Service = new ServiceModel
                         {
                             Id = service.Id,
                             NameOfService = service.NameOfService,
@@ -157,7 +157,7 @@ namespace Salon.BLL.Services
                         },
                         Price = service.Price,
                         Date = c.DateOfProcedure,
-                        Status = new StateViewModel
+                        Status = new StateModel
                         {
                             Id = state.Id,
                             OrderStatus = state.OrderStatus
@@ -165,8 +165,8 @@ namespace Salon.BLL.Services
                     });
                 }
 
-                PageViewModel pageViewModel = new PageViewModel(count, page, pageSize);
-                OrderIndexViewModel viewModel = new OrderIndexViewModel
+                PageModel pageViewModel = new PageModel(count, page, pageSize);
+                OrderIndexModel viewModel = new OrderIndexModel
                 {
                     PageViewModel = pageViewModel,
                     Order = ordersVM.OrderByDescending(x => x.Date)
@@ -180,13 +180,13 @@ namespace Salon.BLL.Services
             }
         }
 
-        public void UpdateOrder(int id, GlobalViewModel order)
+        public void Update(int id, GlobalModel order)
         {
             try
             {
-                Order customerSelected = _orderManager.GetSingle(id);
+                OrderEntity customerSelected = _orderManager.GetSingle(id);
 
-                Order orderToUpdate = new Order
+                OrderEntity orderToUpdate = new OrderEntity
                 {
                     ServiceId = order.ServiceId,
                     CustomerId = order.CustomerId,
@@ -194,7 +194,7 @@ namespace Salon.BLL.Services
                     StatusId = order.StatusId,
                 };
 
-                Order updatedOrder = _orderManager.Update(id, orderToUpdate);
+                OrderEntity updatedOrder = _orderManager.Update(id, orderToUpdate);
             }
             catch (Exception ex)
             {

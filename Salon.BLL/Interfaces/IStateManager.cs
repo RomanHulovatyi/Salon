@@ -5,6 +5,6 @@ namespace Salon.BLL.Interfaces
 {
     public interface IStateManager
     {
-        public IEnumerable<StateViewModel> GetStates();
+        public IEnumerable<StateModel> GetStates();
     }
 }

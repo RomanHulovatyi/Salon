@@ -9,23 +9,23 @@ namespace Salon.BLL.Services
 {
     public class StateManager : IStateManager
     {
-        private ISalonManager<State> _salonManager;
+        private ISalonRepository<StateEntity> _salonManager;
 
-        public StateManager(ISalonManager<State> salonManager)
+        public StateManager(ISalonRepository<StateEntity> salonManager)
         {
             _salonManager = salonManager;
         }
 
-        public IEnumerable<StateViewModel> GetStates()
+        public IEnumerable<StateModel> GetStates()
         {
             try
             {
-                IEnumerable<State> customers = _salonManager.GetList();
+                IEnumerable<StateEntity> customers = _salonManager.GetList();
 
-                List<StateViewModel> statesVM = new List<StateViewModel>();
-                foreach (State c in customers)
+                List<StateModel> statesVM = new List<StateModel>();
+                foreach (StateEntity c in customers)
                 {
-                    statesVM.Add(new StateViewModel
+                    statesVM.Add(new StateModel
                     {
                         Id = c.Id,
                         OrderStatus = c.OrderStatus

@@ -4,10 +4,10 @@ namespace Salon.BLL.Interfaces
 {
     public interface IOrderManager
     {
-        public void AddOrder(GlobalViewModel order);
-        public OrderIndexViewModel GetOrders(int page);
-        public OrderViewModel GetOrder(int id);
-        public void UpdateOrder(int id, GlobalViewModel order);
-        public string DeleteOrder(int id);
+        public void Add(GlobalModel order);
+        public OrderIndexModel Get(int page);
+        public OrderModel GetOrder(int id);
+        public void Update(int id, GlobalModel order);
+        public string Delete(int id);
     }
 }

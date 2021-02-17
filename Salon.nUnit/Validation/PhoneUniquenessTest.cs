@@ -21,7 +21,7 @@ namespace Salon.nUnit.Validation
             temp.Add("testing");
             temp.Add("testing1");
 
-            var mock = new Mock<ISalonManager<Customer>>();
+            var mock = new Mock<ISalonRepository<CustomerEntity>>();
             var phoneValidation = new PhoneUniqueness(mock.Object);
             mock.Setup(x => x.GetPhoneNumbers()).Returns(temp);
 

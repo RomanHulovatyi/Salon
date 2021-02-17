@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Salon.Entities.Models
 {
-    public class State : Table
+    public class ServiceEntity : Table
     {
         public int Id { get; set; }
-        public string OrderStatus { get; set; }
+        public string NameOfService { get; set; }
+        public decimal Price { get; set; }
     }
 }
