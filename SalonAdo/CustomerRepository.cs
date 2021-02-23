@@ -64,27 +64,28 @@ namespace Salon.ADO.DAL
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
 
-            SqlCommand command = new SqlCommand(sqlExpression, sql);
-            SqlDataReader reader = command.ExecuteReader();
+                SqlCommand command = new SqlCommand(sqlExpression, sql);
+                SqlDataReader reader = command.ExecuteReader();
 
-            if (reader.HasRows)
-            {
-                while (reader.Read())
+                if (reader.HasRows)
                 {
-                    CustomerEntity customer = new CustomerEntity
+                    while (reader.Read())
                     {
-                        Id = reader.GetInt32(0),
-                        FirstName = reader.GetString(1),
-                        LastName = reader.GetString(2),
-                        PhoneNumber = reader.GetString(3),
-                        Email = reader.GetString(4)
-                    };
+                        CustomerEntity customer = new CustomerEntity
+                        {
+                            Id = reader.GetInt32(0),
+                            FirstName = reader.GetString(1),
+                            LastName = reader.GetString(2),
+                            PhoneNumber = reader.GetString(3),
+                            Email = reader.GetString(4)
+                        };
 
-                    customers.Add(customer);
+                        customers.Add(customer);
+                    }
                 }
-            }
 
             sql.Close();
+            
 
             return customers;
         }

@@ -29,7 +29,7 @@ namespace Salon.ADO.DAL
                                     $"VALUES ('{newOrder.ServiceId}', " +
                                     $"'{newOrder.CustomerId}', " +
                                     $"'{newOrder.DateOfProcedure}', " +
-                                    $"N'6')";
+                                    $"N'7')";
             SqlConnection sql = _connection.CreateSqlConnection();
             sql.Open();
 

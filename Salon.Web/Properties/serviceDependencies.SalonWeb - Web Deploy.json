@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "mssql1": {
+      "resourceId": null,
+      "type": "mssql.onprem",
+      "connectionId": "DefaultConnection",
+      "secretStore": null
+    },
+    "mssql2": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/romanhulovatyi/databases/Salon",
+      "type": "mssql.azure",
+      "connectionId": "DefaultConnection1",
+      "secretStore": "AzureAppSettings"
+    }
+  }
+}

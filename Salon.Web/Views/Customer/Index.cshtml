@@ -49,21 +49,53 @@
 
     </tbody>
 </table>
+@*@if (Model.PageViewModel.HasPreviousPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+           class="btn btn-outline-dark">
+            <i class="glyphicon glyphicon-chevron-left"></i>
+            Prev
+        </a>
+    }
+    @if (Model.PageViewModel.HasNextPage)
+    {
+        <a asp-action="Index"
+           asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+           class="btn btn-outline-dark">
+            Next
+            <i class="glyphicon glyphicon-chevron-right"></i>
+        </a>
+    }*@
+
+
 @if (Model.PageViewModel.HasPreviousPage)
 {
     <a asp-action="Index"
        asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
        class="btn btn-outline-dark">
         <i class="glyphicon glyphicon-chevron-left"></i>
-        Prev
+        1
+    </a>
+    <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber)"
+       class="btn btn-outline-dark">
+        <i class="glyphicon glyphicon-chevron-left"></i>
+        2
     </a>
 }
 @if (Model.PageViewModel.HasNextPage)
 {
     <a asp-action="Index"
+       asp-route-page="@(Model.PageViewModel.PageNumber)"
+       class="btn btn-outline-dark">
+        1
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+    <a asp-action="Index"
        asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
        class="btn btn-outline-dark">
-        Next
+        2
         <i class="glyphicon glyphicon-chevron-right"></i>
     </a>
 }
@@ -74,7 +106,7 @@
 
         $(function () {
             $.ajaxSetup({ cache: false });
-           $(".compItem").click(function (e) {
+            $(".compItem").click(function (e) {
 
                 e.preventDefault();
                 $.get(this.href, function (data) {

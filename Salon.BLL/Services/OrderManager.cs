@@ -33,7 +33,7 @@ namespace Salon.BLL.Services
                     ServiceId = order.ServiceId,
                     CustomerId = order.CustomerId,
                     DateOfProcedure = order.Date,
-                    StatusId = 6
+                    StatusId = 7
                 };
 
                 OrderEntity createdOrder = _orderManager.Add(newOrder);
