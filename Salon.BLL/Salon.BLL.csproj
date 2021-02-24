@@ -10,6 +10,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Salon.Abstractions\Salon.Abstractions.csproj" />
+    <ProjectReference Include="..\Salon.Entities\Salon.Entities.csproj" />
     <ProjectReference Include="..\Salon.Validation\Salon.Validation.csproj" />
   </ItemGroup>
 

@@ -8,4 +8,10 @@
     <PackageReference Include="System.Data.SqlClient" Version="4.8.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Salon.Abstractions\Salon.Abstractions.csproj" />
+    <ProjectReference Include="..\Salon.ADO.DAL\Salon.ADO.DAL.csproj" />
+    <ProjectReference Include="..\Salon.Entities\Salon.Entities.csproj" />
+  </ItemGroup>
+
 </Project>
