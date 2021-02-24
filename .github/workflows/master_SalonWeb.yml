@@ -22,7 +22,7 @@ jobs:
         dotnet-version: '5.0.x'
 
     - name: Build with dotnet
-      run: dotnet build Salon/Salon.Web/Salon.Web.csproj --configuration Release
+      run: dotnet build Salon.Web/Salon.Web.csproj --configuration Release
 
 
     - name: dotnet publish
