@@ -62,7 +62,7 @@ namespace Salon.nUnit.BLL
             customerManager.Get();
 
             //Assert
-            mock.Verify(x => x.GetList(), Times.Exactly(2));
+            mock.Verify(x => x.GetList(), Times.Once());
         }
 
         [Test]
